@@ -14,4 +14,4 @@ En esta carpeta se encuentra el código necesario para correr un SVC con paráme
 ## CosineSimilarity
 ***
 
-En esta carpeta se encuentra código para caluclar la similitud coseno entre cada par de documentos en el conjunto de datos de calibración.
+En esta carpeta se encuentra una solución rápida a la tarea PAN2020 sobre verificación de autoría. Todos los documentos se representan usando un modelo de Bag of character ngrams, eso es TFIDF ponderado. La semejanza del coseno entre cada par de documentos en el conjunto de datos de calibración es calculado. Finalmente, las similitudes resultantes son optimizadas y proyectadas a través de un simple reescalado, para que puedan funcionar como pseudo-probabilidades, que indican la probabilidad de que un par de documentos es un par del mismo autor.
