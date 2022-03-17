@@ -1,0 +1,189 @@
+# -*- coding: utf-8 -*-
+
+import os
+import time
+from tqdm import tqdm
+
+from multiprocessing import cpu_count
+from joblib import Parallel, delayed
+
+from text_to_graph import (TextParser, ToCoocurrence, _rc_dict, encode_pos)
+try:
+    from ..utils.common_func import save_obj, load_obj, print_time, total_size
+except:
+    import sys
+    sys.path.insert(1,os.path.join(os.path.abspath('.'),".."))
+    from utils.common_func import save_obj, load_obj, print_time, total_size
+
+# ============================== To transform texts dict ==========
+# ===== Text to graph and features
+
+def text_to_text_parsed(text, remove_punct=[]):
+    parser = TextParser(remove_punct=remove_punct)
+    parsed = parser.define_tagged(text)
+    return parsed
+
+
+def text_parsed_to_graph_sparse_raw(parsed, reduce_classes, graph_type):
+    coocurrence = ToCoocurrence(reduce_classes, graph_type)
+    coocurrence.grown_graph(parsed)
+    sparse, node_names = coocurrence.to_sparse_raw()
+    return (sparse, node_names)
+
+
+def graph_sparse_raw_to_pos_encoded(sparse_raw):
+    node_names = sparse_raw[1]
+    node_pos = [node[1] for node in node_names]
+    node_attr = encode_pos(node_pos)
+    return node_attr
+
+# ========== dict to dict transformations
+
+def dict_to_dict(origin_dict, function, cpu_c,
+                 dest_folder, dest_file, log, function_args,
+                 use_joblib=None, count_flag=False):
+    """Parallel dict to dict process"""
+
+    print('Cores: ', cpu_c, file=log)
+    print('Processing to ' + dest_file + '...')
+    start_time_p = time.time()
+    list_dict = tqdm(list(origin_dict.items()))
+    result = \
+        Parallel(n_jobs=cpu_c)(
+            delayed(lambda x: (x[0], function(x[1], **function_args)))(item)
+            for item in list_dict)
+    del origin_dict
+
+    # solo util en caso de querer contar cuantas palabras se encontraron
+    # en el modelo de lenguaje
+    if count_flag:
+        exist_counts = [item[1][1] for item in result]
+        lens = [item[1][2] for item in result]
+        print('exist_counts:', sum(exist_counts), file=log)
+        print('lens:', sum(lens), file=log)
+        result = [(item[0], item[1][0]) for item in result]
+
+    result = dict(result)
+    print_time(start_time_p, 'Process ' + dest_file, log)
+
+    print('Saving with joblib...')
+    print('object size: ', total_size(result))
+    print('object size: ', total_size(result), file=log)
+    start_time_s = time.time()
+    save_obj(result, os.path.join(dest_folder, dest_file),
+             use_joblib=use_joblib)
+    print_time(start_time_s, 'Save ' + dest_file, log)
+
+    print('function_args:', file=log)
+    print(function_args, file=log)
+    return result
+
+def pipeline_dict_parsed_and_graphs(origin_dict, dest_label, sufix,
+                                    dest_folder, log, cpu_c):
+    print('Processing to parsed dict...')
+    dest_file = 'parsed_dict' + sufix
+    function_args = dict()
+    parsed_dict = \
+        dict_to_dict(origin_dict, text_to_text_parsed, cpu_c,
+                     dest_folder, dest_file, log, function_args)
+
+    # Convert to different graph formats
+    gv_op = ['med', 'short', 'full']
+    for graph_version in gv_op:
+        # Load parsed_dict si no está en memoria
+        if 'parsed_dict' not in locals():
+            parsed_dict = \
+                load_obj(os.path.join(dest_folder, 'parsed_dict' + sufix),
+                         fast=True)
+
+        print(f'===== Processing {graph_version} ... =====')
+        print('Processing to sparse_raw dict...')
+        dest_file = 'sparse_raw_dict_' + graph_version + sufix
+        function_args = {'reduce_classes': _rc_dict[graph_version],
+                         'graph_type': 'DiGraph'}
+        sparse_raw = \
+            dict_to_dict(parsed_dict, text_parsed_to_graph_sparse_raw, cpu_c,
+                         dest_folder, dest_file, log, function_args)
+
+        print('Processing to pos_encoded dict...')
+        dest_file = dest_label + '_' + graph_version + sufix
+        function_args = dict()
+        pos_encoded = \
+            dict_to_dict(sparse_raw, graph_sparse_raw_to_pos_encoded, cpu_c,
+                         dest_folder, dest_file, log, function_args)
+        del sparse_raw
+        del pos_encoded
+
+
+# ========== Functions to apply transforms to pipeline
+
+def pipeline_dict_main():
+    """Function to process texts_dict in parts to default graphs"""
+    dataset_name = '20-large-train'
+    element_num = 50000
+
+    folder_label = str(None) + '_' + str(element_num)
+    symbol = '_%%'
+    cpu_c = max([int(cpu_count()*0.5), 1])
+
+    dest_folder = os.path.join('../data/PAN20_graphs/',
+                               dataset_name + '_' + folder_label)
+    if not os.path.exists(dest_folder):
+        print('... creando folder ', dest_folder)
+        os.makedirs(dest_folder)
+        
+    print('==================================================')
+    print('========== Procesando parsed and graphs')
+    origin_label = 'texts_dict_clean'
+    dest_label = 'pos_encoded_dict'
+    log = open(os.path.join(dest_folder, 'log_graphs.txt'), 'w+')
+    args = (cpu_c)
+    apply_to_lst_arch(origin_label, dest_label, dest_folder, symbol, log,
+                      pipeline_dict_parsed_and_graphs, args)
+    log.close()
+
+def apply_to_lst_arch(origin_label, dest_label, dest_folder, symbol, log,
+                      pipeline_func, pipeline_func_args):
+    lst_arch = read_parts(dest_label, dest_folder, symbol)
+    if lst_arch:
+        print('El folder de destino ya tiene archivos, verifica quieras '
+              'sobreescribir')
+    else:
+        lst_arch = read_parts(origin_label, dest_folder, symbol)
+        print('Número de partes: ', len(lst_arch))
+        print(lst_arch)
+        print('Número de partes: ', len(lst_arch), file=log)
+        print(lst_arch, file=log)
+        for arch in lst_arch:
+            print('\n========== Work in part ' + arch)
+            print('\n========== Work in part ' + arch, file=log)
+            # Quitamos la extensión
+            arch_s, _ = os.path.splitext(arch)
+            # Obtenemos sufijo
+            sufix = arch_s[arch_s.find(symbol):]
+            origin_dict = load_obj(dest_folder + '/' + arch, fast=True)
+            pipeline_func(origin_dict, dest_label, sufix, dest_folder, log,
+                          *pipeline_func_args)
+
+
+# ============================================================
+# ============================== leerpickle functions ==========
+
+def read_parts(file_name, dest_folder, symbol):
+    lst_arch = os.listdir(dest_folder)
+    new_files_prefix = file_name + symbol
+    prefix_len = len(new_files_prefix)
+    lst_arch = [x for x in lst_arch if x[:prefix_len] == new_files_prefix]
+    lst_arch = sorted(lst_arch)
+    return lst_arch
+
+
+# ============================================================
+# ============================== Test functions ==========
+
+def main():
+     pipeline_dict_main()
+
+
+if __name__ == "__main__":
+    main()
