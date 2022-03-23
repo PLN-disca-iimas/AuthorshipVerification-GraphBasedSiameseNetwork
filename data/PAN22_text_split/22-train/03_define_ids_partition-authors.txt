@@ -1,0 +1,65 @@
+part:   len: 208 truth:  84
+part:   len: 168 truth:  69
+part:   len: 154 truth:  44
+part:   len: 147 truth:  47
+part:   len: 130 truth:  58
+part:   len: 123 truth:  55
+part:   len: 118 truth:  53
+part:   len: 120 truth:  39
+part:   len: 124 truth:  28
+part:   len: 104 truth:  43
+part:   len: 95 truth:  45
+part:   len: 104 truth:  41
+part:   len: 99 truth:  31
+part:   len: 92 truth:  38
+part:   len: 92 truth:  41
+part:   len: 89 truth:  41
+part:   len: 88 truth:  29
+part:   len: 86 truth:  40
+part:   len: 80 truth:  35
+part:   len: 82 truth:  38
+part:   len: 69 truth:  33
+part:   len: 66 truth:  29
+part:   len: 61 truth:  21
+part:   len: 56 truth:  31
+part:   len: 64 truth:  27
+part:   len: 59 truth:  29
+part:   len: 53 truth:  26
+part:   len: 50 truth:  29
+part:   len: 53 truth:  29
+part:   len: 47 truth:  27
+part:   len: 52 truth:  29
+part:   len: 50 truth:  27
+part:   len: 45 truth:  17
+part:   len: 35 truth:  17
+part:   len: 46 truth:  26
+part:   len: 39 truth:  21
+part:   len: 37 truth:  23
+part:   len: 34 truth:  21
+part:   len: 33 truth:  24
+part:   len: 27 truth:  19
+part:   len: 25 truth:  21
+part:   len: 29 truth:  20
+part:   len: 29 truth:  15
+part:   len: 24 truth:  17
+part:   len: 23 truth:  17
+part:   len: 18 truth:  15
+part:   len: 19 truth:  15
+part:   len: 18 truth:  15
+part:   len: 19 truth:  17
+part:   len: 16 truth:  14
+part:   len: 15 truth:  14
+part:   len: 17 truth:  14
+part:   len: 13 truth:  11
+part:   len: 10 truth:  10
+part:   len: 7 truth:  6
+part:   len: 6 truth:  6
+Total partitions:  56
+
+ ===== Process. Execute time was:
+Minutes: 0.00
+Seconds: 0.12
+
+ ===== Save. Execute time was:
+Minutes: 0.00
+Seconds: 0.00

@@ -1,0 +1,130 @@
+Duplicated problems:
+prob_id
+00477fd8-6af8-4c02-96eb-a9761295c08d07509     (297, 1708)
+01c9d198-e4fb-453e-b303-4e90b950e66b06515     (465, 1139)
+02d6d6ac-42ad-4075-af66-2db127d0ebbb04691     (1449, 435)
+0746e6de-feec-4a53-9a6f-cb33b393e2f306531    (1049, 1363)
+08b6ecc8-9540-4da3-a2f0-e36eb10d45b002575     (268, 2463)
+                                                 ...     
+fa6e607b-1bc2-4153-826b-7e5a0906f81d07088        (9, 109)
+fd48d00c-de0c-4c18-8f25-6ec44912d95e06429      (720, 369)
+fd4db842-2bac-48f8-9466-9860df55d7df09398     (504, 1033)
+fd9325da-1cdb-4771-a5c7-8388c21c45c505077      (602, 759)
+fe221341-a26f-472a-afc7-62fff52c8ad609846     (554, 1381)
+Name: text_id, Length: 163, dtype: object
+Texts with less than 200 tokens:
+       text_id  ... chars
+1            1  ...   512
+7            7  ...   557
+9            9  ...   638
+13          13  ...   608
+15          15  ...   568
+...        ...  ...   ...
+5201      5201  ...   596
+5671      5671  ...   618
+5951      5951  ...   583
+6139      6139  ...   612
+11291    11291  ...   632
+
+[368 rows x 4 columns]
+Problems with texts with less than 200 tokens:
+['a09fdc6b-ed15-48c5-9d2e-572f989b9b4500000'
+ '925be2a8-4a84-453e-9c64-d821cd5433b600154'
+ '720279a8-9110-474d-9e2b-0b128b65576502326' ...
+ '5d732f1d-8603-4603-8a30-90227ec7068311685'
+ '7054cf54-ccdb-4098-9a33-98065cded6a211733'
+ '9dabe145-c836-4a2e-8bc5-e6fc08db168512185']
+
+ ===== Process. Execute time was:
+Minutes: 0.04
+Seconds: 2.17
+
+ ===== Save. Execute time was:
+Minutes: 0.00
+Seconds: 0.14
+
+=============== Problem stats
+Total problems: 3567
+Total problems per class:
+True: 1631
+False: 1936
+
+=============== Texts stats
+Columns in dataframe: Index(['start_str', 'end_str', 'chars', 'author', 'topic', 'text_id', 'tokens',
+       'words', 'sentences', 'noascii_spaces', 'noascii_others'],
+      dtype='object')
+==========
+Total texts: 678
+chars: 3318 / 602 - 22160
+tokens: 786 / 200 - 3987
+words: 729 / 181 - 3499
+sentences: 18 / 1 - 143
+noascii_spaces: 0 / 0 - 0
+noascii_others: 8 / 0 - 138
+==========
+Authors:
+mean: 12.107142857142858 / 7 - 30
+en_36     30
+en_110    25
+en_97     20
+en_13     18
+en_112    17
+en_60     17
+en_55     16
+en_37     16
+en_34     16
+en_77     15
+en_75     15
+en_53     15
+en_59     15
+en_51     14
+en_111    14
+en_56     14
+en_18     13
+en_22     13
+en_11     13
+en_99     12
+en_100    12
+en_61     12
+en_105    12
+en_5      12
+en_63     12
+en_98     12
+en_107    12
+en_103    12
+en_102    12
+en_54     12
+en_101    11
+en_113    11
+en_72     11
+en_104    11
+en_52     11
+en_21     10
+en_35     10
+en_20     10
+en_108    10
+en_62     10
+en_114    10
+en_2      10
+en_19      9
+en_3       9
+en_73      8
+en_57      8
+en_67      8
+en_96      7
+en_109     7
+en_78      7
+en_4       7
+en_12      7
+en_66      7
+en_74      7
+en_76      7
+en_58      7
+Name: author, dtype: int64
+Topics:
+Text per topic: 169.5 / 35 - 507
+email           507
+essay            93
+text_message     43
+memo             35
+Name: topic, dtype: int64

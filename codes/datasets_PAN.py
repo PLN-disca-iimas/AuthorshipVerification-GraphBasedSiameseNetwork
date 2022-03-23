@@ -121,7 +121,7 @@ def wrapper_TextDataset(dataset_name, lim=None, where_to_use='server'):
 
 # ==================== Original datasets readers
 class TextDataset2022:
-    """Clase para leer el dataset del PAN 2020"""
+    """Clase para leer el dataset del PAN 2022"""
 
     def __init__(self, jsonl_text, jsonl_truth, lim=None):
         self.jsonl_text = jsonl_text
@@ -607,7 +607,6 @@ def asociated_ids_author(df, author_list):
     mask = df['author'].isin(author_list)
     if not mask.any():
         return []
-
     prob_list = df[mask]['prob_id'].unique()
     # Author_list from problems
     mask = df['prob_id'].isin(prob_list)
@@ -668,6 +667,7 @@ def define_ids_partition(stats_dict_clean, dest_folder, f,
     author_counts = df['author'].value_counts()
     ids_partition = []
     part_num = 0
+    
     for author in author_counts.index:
         prob_ids = asociated_fn(df, [author])
         if len(prob_ids) == 0:
@@ -684,7 +684,7 @@ def define_ids_partition(stats_dict_clean, dest_folder, f,
         part_num += 1
         print('part:   len:', part['len'], 'truth: ', part['truth'], file=f)
         df = df[~df['prob_id'].isin(prob_ids)]
-
+            
     print('Total partitions: ', len(ids_partition), file=f)
     assert sum([part['len'] for part in ids_partition]) == total_problems
     # Print time
@@ -718,14 +718,16 @@ def define_splits_indexes(partition, dest_folder, f,
     # ===== Unpack objects
     total_problems = partition[1]
     ids_partition = partition[0]
-
+    
     # ===== Group parts in balanced splits
     df = pd.DataFrame(ids_partition)
     df.set_index('part_num')
     df_val = df[['len', 'truth']]
     df_ids = df[['prob_ids']]
+    
     # Define positive and negative lists
     mask = (df_val['truth'] / df_val['len']) >= 0.5
+    
     df_pos = df_val[mask].sort_values(['len', 'truth'], ascending=False)
     df_neg = df_val[~mask].sort_values('truth')
     df_neg = df_neg.sort_values('len', ascending=False)
@@ -734,7 +736,6 @@ def define_splits_indexes(partition, dest_folder, f,
         split_size = total_problems*split_proportion
     else:
         split_size = split_proportion
-
     verif_lim = split_size * (1 - bal_lim)
     part_splits = []
     part_splits_totals = []
@@ -749,7 +750,7 @@ def define_splits_indexes(partition, dest_folder, f,
                 df_op = df_pos
             else:
                 df_op = df_neg
-
+            
             cont = False
             for index, part in df_op.iterrows():
                 new_total_truth = total_truth + part['truth']
@@ -775,12 +776,12 @@ def define_splits_indexes(partition, dest_folder, f,
     part_splits_totals.append((df_pos['len'].sum() + df_neg['len'].sum(),
                                df_pos['truth'].sum() + df_neg['truth'].sum()))
     print(part_splits_totals, file=f)
-
+    
     # Define ids_splits
     ids_splits = [np.concatenate([df_ids['prob_ids'].iloc[index]
                                   for index in partition])
                   for partition in part_splits]
-
+    
     # Print time
     print_time(start_time_p, 'Process', f)
     start_time_s = time.time()
@@ -923,7 +924,6 @@ def verify_splits(ds_list_train, ds_list_val, ds_list_test,
 
 
 # ============================== Pipeline to process dataset ==========
-
 def dataset_pipeline():
     """Función para procesar el dataset del pan 2020.
     Se obtienen estadísticas, se transforma a text_dict,
@@ -931,27 +931,100 @@ def dataset_pipeline():
     se obtiene particion y conjuntos train, val y test.
     """
 
-#     dataset_name = '20-small-bal'
-    dataset_name = '20-small-train'
+    #dataset_name = '20-small-bal'
+    dataset_name = '22-train'
 #     dataset_name = '20-large-train'
     lim = None
     p_lim = '' if lim is None else ('_' + str(lim))
 
-    dest_folder = os.path.join('../data/PAN20_text_split',
+    dest_folder = os.path.join('../data/PAN22_text_split',
                                dataset_name + p_lim)
     if not os.path.exists(dest_folder):
         os.makedirs(dest_folder)
 
     start_time = time.time()
+    dataset, param_read = wrapper_TextDataset(dataset_name, lim)
+
+    print('Executing dataset_to_texts_dict...')
+    log_name = os.path.join(dest_folder, '01_dataset_to_texts_dict.txt')
+    print('log save in: ' + log_name)
+    f = open(log_name, 'w+')
+    stats_dict, ds_list, texts_dict = \
+        dataset_to_texts_dict(dataset, f, dest_folder)
+    count_stats(stats_dict, ds_list, f, dest_folder)
+    f.close()
+
+    print('Executing define_clean_dataframe...')
+    log_name = os.path.join(dest_folder, '02_define_clean_dataframe.txt')
+    print('log save in: ' + log_name)
+    f = open(log_name, 'w+')
+    stats_dict_clean, ds_list_clean, texts_dict_clean = \
+        define_clean_dataframe(stats_dict, ds_list, texts_dict,
+                                f, dest_folder)
+    count_stats(stats_dict_clean, ds_list_clean, f, dest_folder)
+    f.close()
+
+    stats_dict_clean_path = os.path.join(dest_folder,
+                                         'clean/stats_dict_clean')
+    stats_dict_clean = load_obj(stats_dict_clean_path, fast=True)
+    label = 'authors'
+    print('Executing define_ids_partition (' + label + ')...')
+    log_name = os.path.join(dest_folder, '03_define_ids_partition-' +
+                            label + '.txt')
+    print('log save in: ' + log_name)
+    f = open(log_name, 'w+')
+    partition_authors = \
+        define_ids_partition(stats_dict_clean, dest_folder, f)
+
+# #     Uncomment next lines to try split dataset in authors and topics
+#    print('Executing define_ids_partition (authors and topics)...')
+#    label = 'authors_topics'
+#    log_name = os.path.join(dest_folder, '04_define_ids_partition-' +
+#                            label + '.txt')
+#    print('log save in: ' + log_name)
+#    f = open(log_name, 'w+')
+#    partition_authors_topics = \
+#        define_ids_partition(stats_dict_clean, dest_folder,f,
+#                             asociated_fn=asociated_ids_author_topic,
+#                             label=label)
+
     partition_authors_path = os.path.join(dest_folder, 'partitions/partition-authors')
     partition_authors = load_obj(partition_authors_path, fast=True)
     print('Executing define_splits_indexes...')
-    log_name = os.path.join(dest_folder, '04_define_splits_indexes.txt')
+    log_name = os.path.join(dest_folder, '05_define_splits_indexes.txt')
     print('log save in: ' + log_name)
     f = open(log_name, 'w+')
     ids_splits = define_splits_indexes(partition_authors, dest_folder, f,
-                                       split_proportion=5250,
+                                     split_proportion=0.1,
                                        split_num=5, bal_lim=0.4)
+
+    ds_list_clean = os.path.join(dest_folder, 'clean/ds_list_clean')
+    ds_list_clean = load_obj(ds_list_clean, fast=True)
+    ids_splits = os.path.join(dest_folder, 'partitions/ids_splits')
+    ids_splits = load_obj(ids_splits, fast=True)
+    indexes = {'test': ids_splits[0],
+               'val': ids_splits[1],
+               'train': np.concatenate(ids_splits[2:])}
+    print('Executing define_dataset_splits...')
+    ds_list_train, ds_list_val, ds_list_test = \
+        define_dataset_splits(ds_list_clean, indexes, dest_folder)
+
+    ds_list_train_path = os.path.join(dest_folder, 'ds_list_train')
+    ds_list_train = load_obj(ds_list_train_path, fast=True)
+    ds_list_val_path = os.path.join(dest_folder, 'ds_list_val')
+    ds_list_val = load_obj(ds_list_val_path, fast=True)
+    ds_list_test_path = os.path.join(dest_folder, 'ds_list_test')
+    ds_list_test = load_obj(ds_list_test_path, fast=True)
+    stats_dict_clean_path = \
+         os.path.join(dest_folder, 'clean/stats_dict_clean')
+    stats_dict_clean = load_obj(stats_dict_clean_path, fast=True)
+    print('Executing verify_splits...')
+    log_name = os.path.join(dest_folder, '05_verify_splits.txt')
+    print('log save in: ' + log_name)
+    f = open(log_name, 'w+')
+    verify_splits(ds_list_train, ds_list_val, ds_list_test,
+                  stats_dict_clean, dest_folder, f)
+    
     # ========== Print time
     print_time(start_time, 'All process')
 
@@ -1248,12 +1321,12 @@ def verify_splits_custom():
 # ============================================================
 
 def main():
-    #     dataset_pipeline()
+    dataset_pipeline()
 #     verify_splits_custom()
     #compare_datasets()
 #     test_fit_dict()
 #     test_wrapper_TextDataset()
-    get_pairs()
+#    get_pairs()
 
 
 if __name__ == "__main__":
