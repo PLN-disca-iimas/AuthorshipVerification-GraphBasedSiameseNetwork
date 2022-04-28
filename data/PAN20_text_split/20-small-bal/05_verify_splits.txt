@@ -1,0 +1,33 @@
+
+----- Problems in split and positive examples:
+Train:
+470 . Truth  470
+Val:
+15 . Truth  15
+Test:
+15 . Truth  15
+
+----- Intersections:
+train and val
+Texts:  0
+set()
+authors: 0
+set()
+topics: 6
+{'Slayers', 'Saint Seiya', 'Battle B-Daman', 'Saiyuki', 'Slam Dunk', 'Xiaolin Showdown'}
+
+train and test
+Texts:  0
+set()
+authors: 0
+set()
+topics: 3
+{'Saiyuki', 'Hetalia - Axis Powers', 'Yu-Gi-Oh'}
+
+test and val
+Texts:  0
+set()
+authors: 0
+set()
+topics: 1
+{'Saiyuki'}

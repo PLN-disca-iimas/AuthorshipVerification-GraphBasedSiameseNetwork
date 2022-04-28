@@ -1,0 +1,88 @@
+Número de partes:  1
+['texts_dict_clean_%%00.pkl']
+
+========== Work in part texts_dict_clean_%%00.pkl
+Cores:  8
+
+ ===== Process parsed_dict_%%00. Execute time was:
+Minutes: 0.10
+Seconds: 6.30
+object size:  62419883
+
+ ===== Save parsed_dict_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.19
+function_args:
+{}
+Cores:  8
+
+ ===== Process sparse_raw_dict_med_%%00. Execute time was:
+Minutes: 0.01
+Seconds: 0.40
+object size:  7761063
+
+ ===== Save sparse_raw_dict_med_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.04
+function_args:
+{'reduce_classes': ['CD', 'FW', 'JJ', 'JJR', 'JJS', 'LS', 'NN', 'NNS', 'NNP', 'NNPS', 'RB', 'RBR', 'RBS', 'SYM', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', '$OTHER'], 'graph_type': 'DiGraph'}
+Cores:  8
+
+ ===== Process pos_encoded_dict_med_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.20
+object size:  116452
+
+ ===== Save pos_encoded_dict_med_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.02
+function_args:
+{}
+Cores:  8
+
+ ===== Process sparse_raw_dict_short_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.24
+object size:  3878447
+
+ ===== Save sparse_raw_dict_short_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.10
+function_args:
+{'reduce_classes': ['CC', 'CD', 'DT', 'EX', 'FW', 'IN', 'JJ', 'JJR', 'JJS', 'LS', 'MD', 'NN', 'NNS', 'NNP', 'NNPS', 'PDT', 'POS', 'PRP', 'PRP$', 'RB', 'RBR', 'RBS', 'RP', 'SYM', 'TO', 'UH', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'WDT', 'WP', 'WP$', 'WRB', '$PUNCT', '$OTHER'], 'graph_type': 'DiGraph'}
+Cores:  8
+
+ ===== Process pos_encoded_dict_short_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.19
+object size:  116452
+
+ ===== Save pos_encoded_dict_short_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.02
+function_args:
+{}
+Cores:  8
+
+ ===== Process sparse_raw_dict_full_%%00. Execute time was:
+Minutes: 0.01
+Seconds: 0.33
+object size:  26527159
+
+ ===== Save sparse_raw_dict_full_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.15
+function_args:
+{'reduce_classes': [], 'graph_type': 'DiGraph'}
+Cores:  8
+
+ ===== Process pos_encoded_dict_full_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.24
+object size:  116452
+
+ ===== Save pos_encoded_dict_full_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.03
+function_args:
+{}

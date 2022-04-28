@@ -78,6 +78,20 @@ def dict_to_dict(origin_dict, function, cpu_c,
     print(function_args, file=log)
     return result
 
+def pipeline_partition_dict(file_dir, text_dict_name, dest_folder, symbol,
+                            element_num):
+    lst_arch = read_parts(text_dict_name, dest_folder, symbol)
+    if lst_arch:
+        print('El folder de destino ya tiene archivos, verifica quieras '
+              'sobreescribir')
+    else:
+        text_dict = load_obj(os.path.join(file_dir, text_dict_name), fast=True)
+        new_files_prefix = text_dict_name + symbol
+        part_pkl(dest_folder, new_files_prefix, text_dict, element_num)
+        lst_arch = read_parts(text_dict_name, dest_folder, symbol)
+        print('Se crearon total de ', len(lst_arch), ' partes')
+        print(lst_arch)    
+
 def pipeline_dict_parsed_and_graphs(origin_dict, dest_label, sufix,
                                     dest_folder, log, cpu_c):
     print('Processing to parsed dict...')
@@ -119,28 +133,39 @@ def pipeline_dict_parsed_and_graphs(origin_dict, dest_label, sufix,
 
 def pipeline_dict_main():
     """Function to process texts_dict in parts to default graphs"""
-    dataset_name = '20-large-train'
-    element_num = 50000
+    dataset_name = '22-train'
+    element_num = 1046
 
     folder_label = str(None) + '_' + str(element_num)
     symbol = '_%%'
     cpu_c = max([int(cpu_count()*0.5), 1])
 
-    dest_folder = os.path.join('../data/PAN20_graphs/',
+    dest_folder = os.path.join('../data/PAN22_graphs/',
                                dataset_name + '_' + folder_label)
     if not os.path.exists(dest_folder):
         print('... creando folder ', dest_folder)
         os.makedirs(dest_folder)
         
+
+    print('==================================================')
+    print('========== Particionando texts_dict')
+    file_dir = '../data/PAN22_text_split/' + dataset_name
+    text_dict_name = 'texts_dict_clean'
+    pipeline_partition_dict(file_dir, text_dict_name, dest_folder, symbol,
+                            element_num)
+
     print('==================================================')
     print('========== Procesando parsed and graphs')
     origin_label = 'texts_dict_clean'
     dest_label = 'pos_encoded_dict'
     log = open(os.path.join(dest_folder, 'log_graphs.txt'), 'w+')
-    args = (cpu_c)
+    args = [cpu_c]
     apply_to_lst_arch(origin_label, dest_label, dest_folder, symbol, log,
                       pipeline_dict_parsed_and_graphs, args)
     log.close()
+    
+
+# ========== Functions to apply transforms to pipeline    
 
 def apply_to_lst_arch(origin_label, dest_label, dest_folder, symbol, log,
                       pipeline_func, pipeline_func_args):
@@ -168,6 +193,15 @@ def apply_to_lst_arch(origin_label, dest_label, dest_folder, symbol, log,
 
 # ============================================================
 # ============================== leerpickle functions ==========
+
+def part_pkl(dest_folder, new_files_prefix, d, element_num, use_joblib=None):
+    items = sorted(d.items())
+    data = [dict(items[x: x + element_num])
+            for x in range(0, len(d), element_num)]
+    for n in range(len(data)):
+        save_obj(data[n], os.path.join(dest_folder,
+                                       new_files_prefix + f'{n:02}'),
+                 use_joblib=use_joblib)
 
 def read_parts(file_name, dest_folder, symbol):
     lst_arch = os.listdir(dest_folder)

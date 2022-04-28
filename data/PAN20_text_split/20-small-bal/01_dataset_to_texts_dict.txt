@@ -1,0 +1,60 @@
+
+ ===== parallel. Execute time was:
+Minutes: 0.18
+Seconds: 10.64
+
+ ===== Process. Execute time was:
+Minutes: 0.18
+Seconds: 10.75
+
+ ===== Save. Execute time was:
+Minutes: 0.00
+Seconds: 0.01
+
+=============== Problem stats
+Total problems: 500
+Total problems per class:
+True: 500
+False: 0
+
+=============== Texts stats
+Columns in dataframe: Index(['start_str', 'end_str', 'chars', 'author', 'topic', 'text_id', 'tokens',
+       'words', 'sentences', 'noascii_spaces', 'noascii_others'],
+      dtype='object')
+==========
+Total texts: 744
+chars: 21443 / 20887 - 47064
+tokens: 4934 / 4252 - 10707
+words: 4114 / 3719 - 9111
+sentences: 334 / 131 - 662
+noascii_spaces: 0 / 0 - 1
+noascii_others: 0 / 0 - 73
+==========
+Authors:
+mean: 8.175824175824175 / 2 - 25
+357927     25
+178955     25
+3134377    24
+912998     23
+2097622    23
+           ..
+282096      2
+4525500     2
+462851      2
+656148      2
+598323      2
+Name: author, Length: 91, dtype: int64
+Topics:
+Text per topic: 4.300578034682081 / 1 - 69
+Saiyuki             69
+Xiaolin Showdown    61
+Saint Seiya         26
+Slam Dunk           25
+Slayers             22
+                    ..
+Sky High             1
+Horseland            1
+Itazura na Kiss      1
+K                    1
+Ranma                1
+Name: topic, Length: 173, dtype: int64

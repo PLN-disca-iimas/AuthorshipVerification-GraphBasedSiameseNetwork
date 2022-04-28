@@ -14,6 +14,7 @@ import numpy as np
 from unidecode import unidecode
 from nltk import tokenize
 from tqdm import tqdm, trange
+import uuid
 
 from multiprocessing import Pool, cpu_count
 
@@ -518,7 +519,7 @@ def count_stats(stats_dict, ds_list, f, dest_folder=None):
 
 
 def define_clean_dataframe(stats_dict, ds_list, texts_dict, f, dest_folder,
-                           k=10, tokens_min=200):
+                           k=10, tokens_min=1):
     """Función que toma las estadísticas y limpia el dataset.
     Removemos problemas con mismo par de textos
     Removemos problemas con textos de menos de 200 tokens
@@ -543,6 +544,7 @@ def define_clean_dataframe(stats_dict, ds_list, texts_dict, f, dest_folder,
     dup = problems[problems.isin(dup_val.index)]
     print('Duplicated problems:', file=f)
     print(dup, file=f)
+
     # textos con pocos tokens
     few_tok_texts = df_texts[['text_id', 'start_str', 'end_str', 'chars']][
             df_texts['tokens'] < tokens_min]
@@ -553,6 +555,7 @@ def define_clean_dataframe(stats_dict, ds_list, texts_dict, f, dest_folder,
     few_tok_prob_ids = \
         df_stats[df_stats['text_id'].isin(ftt)]['prob_id'].unique()
     print(few_tok_prob_ids, file=f)
+    
     # Define df_stats and df_texts clean
     exclude_ids = np.concatenate([dup.index.to_numpy(), few_tok_prob_ids])
     df_stats_clean = df_stats[~df_stats['prob_id'].isin(exclude_ids)]
@@ -602,7 +605,8 @@ def asociated_ids_author(df, author_list):
     texto de algún autor en la lista,
     luego la lista de todos los autores en estos problemas.
     Así recursivamente..."""
-
+    
+    
     # Prob_list from authors
     mask = df['author'].isin(author_list)
     if not mask.any():
@@ -611,6 +615,7 @@ def asociated_ids_author(df, author_list):
     # Author_list from problems
     mask = df['prob_id'].isin(prob_list)
     author_list_2 = df[mask]['author'].unique()
+    
     df = df[~mask]
     # Recursive call
     prob_ids_rec = asociated_ids_author(df, author_list_2)
@@ -658,17 +663,78 @@ def define_ids_partition(stats_dict_clean, dest_folder, f,
 
     start_time_p = time.time()
 
+    #----------------
+    df_s = stats_dict_clean['df_stats']
+    author_counts = df_s['author'].value_counts()
+    cantidad_textos = []
+    authorsByNumText = []
+    #Se obtiene el numero de textos por autor
+    for author in author_counts.index:
+        mask = df_s['author'].isin([author])
+        text_ids = df_s[mask]['text_id'].unique()
+        cantidad_textos.append((author,len(text_ids)))
+        
+    #Se ordena del autor de mayor textos al de menor
+    cantidad_textos.sort(key = lambda x: x[1], reverse=True) 
+    authorsByNumText = [author for (author,n) in cantidad_textos]
+    #El el segundo parametro del split define el numero de 
+    #grupos con autores ajenos
+    athorsToSplit = np.array_split(authorsByNumText, 12)
+
+    toRemove = []
+    print("Total de problemas limpios: ",len(df_s)/2)
+    for i,group in enumerate(athorsToSplit):
+        mask = df_s['author'].isin(group) #Autores solo de un grupo
+        prob_list = df_s[mask]['prob_id'].unique() #Problemas asociados al grupo
+    
+        #todos los registros de esos probelmas pero que no pertenezcan al grupo
+        mask = df_s['prob_id'].isin(prob_list) & ~df_s['author'].isin(group) 
+        #Autores que comparten probelmas con el grupo pero que no son del grupo
+        author_list_2 = df_s[mask]['author'].unique() 
+    
+        #Se debe de buscar los probelmas de estos autores que concuerden con los del grupo
+        mask = df_s['author'].isin(author_list_2)
+        prob_list2 = df_s[mask]['prob_id'].unique()
+    
+        #De esta lista se deben eliminar lo que compartan con los del grupo
+        mask = df_s['prob_id'].isin(prob_list2) & df_s['author'].isin(group)
+        toDelete = df_s[mask]['prob_id'].unique()
+        print(len(toDelete),"eliminados del grupo ",i)
+        toRemove.extend(toDelete)
+    
+        
+    df_tmp = df_s[~df_s['prob_id'].isin(set(toRemove))]
+
+
+    print("Despues de eliminar los problemas relacionados entre grupos")
+    print("Total de problemas: ",len(df_tmp['prob_id'])/2)
+
+    #----------------
+
     # ===== Split prob_ids in sets of disjoint authors (and maybe topics)
-    df = stats_dict_clean['df_stats'][['prob_id', 'author', 'topic']]
-    df_truth = stats_dict_clean['df_stats'][
-            ['prob_id', 'truth']].drop_duplicates()
+    df = df_tmp[['prob_id', 'author', 'topic']]
+    df_truth = df_tmp[
+            ['prob_id', 'truth']].drop_duplicates()   
+    
     total_problems = len(df_truth)
     # Split algorithm
     author_counts = df['author'].value_counts()
     ids_partition = []
-    part_num = 0
+    part_num = 0      
     
+    authorsByRelation = []
     for author in author_counts.index:
+        mask = df['author'].isin([author])
+        prob_list = df[mask]['prob_id'].unique()
+        # Author_list from problems
+        mask = df['prob_id'].isin(prob_list)
+        author_list_2 = df[mask]['author'].unique()
+        authorsByRelation.append((author,len(author_list_2)))
+    
+    authorsByRelation.sort(key=lambda tup: tup[1])  
+    
+    for (author,rel) in authorsByRelation:
+        
         prob_ids = asociated_fn(df, [author])
         if len(prob_ids) == 0:
             continue
@@ -777,6 +843,7 @@ def define_splits_indexes(partition, dest_folder, f,
                                df_pos['truth'].sum() + df_neg['truth'].sum()))
     print(part_splits_totals, file=f)
     
+    print(part_splits)
     # Define ids_splits
     ids_splits = [np.concatenate([df_ids['prob_ids'].iloc[index]
                                   for index in partition])
@@ -925,7 +992,7 @@ def verify_splits(ds_list_train, ds_list_val, ds_list_test,
 
 # ============================== Pipeline to process dataset ==========
 def dataset_pipeline():
-    """Función para procesar el dataset del pan 2020.
+    """Función para procesar el dataset del pan 2022.
     Se obtienen estadísticas, se transforma a text_dict,
     se limpia,
     se obtiene particion y conjuntos train, val y test.
@@ -964,6 +1031,7 @@ def dataset_pipeline():
     count_stats(stats_dict_clean, ds_list_clean, f, dest_folder)
     f.close()
 
+
     stats_dict_clean_path = os.path.join(dest_folder,
                                          'clean/stats_dict_clean')
     stats_dict_clean = load_obj(stats_dict_clean_path, fast=True)
@@ -994,6 +1062,7 @@ def dataset_pipeline():
     log_name = os.path.join(dest_folder, '05_define_splits_indexes.txt')
     print('log save in: ' + log_name)
     f = open(log_name, 'w+')
+    
     ids_splits = define_splits_indexes(partition_authors, dest_folder, f,
                                      split_proportion=0.1,
                                        split_num=5, bal_lim=0.4)
@@ -1024,6 +1093,23 @@ def dataset_pipeline():
     f = open(log_name, 'w+')
     verify_splits(ds_list_train, ds_list_val, ds_list_test,
                   stats_dict_clean, dest_folder, f)
+    
+    #Generar nuevos probelmas, solo para el datasetPan2022
+    stats_dict_clean_path = os.path.join(dest_folder,
+                                         'clean/stats_dict_clean')
+    stats_dict_clean = load_obj(stats_dict_clean_path, fast=True)
+    
+    news_t,news_f = generate_new_probelms(ds_list_train,stats_dict_clean)
+    ds_list_train_n = joinNewDatasets(ds_list_train,stats_dict_clean,news_t,news_f)
+    save_obj(ds_list_train_n, os.path.join(dest_folder, 'ds_list_train_n'))
+    
+    news_t,news_f = generate_new_probelms(ds_list_val,stats_dict_clean)
+    ds_list_val_n = joinNewDatasets(ds_list_val,stats_dict_clean,news_t,news_f)
+    save_obj(ds_list_val_n, os.path.join(dest_folder, 'ds_list_val_n'))
+    
+    news_t,news_f = generate_new_probelms(ds_list_test,stats_dict_clean)
+    ds_list_test_n = joinNewDatasets(ds_list_test,stats_dict_clean,news_t,news_f)
+    save_obj(ds_list_test_n, os.path.join(dest_folder, 'ds_list_test_n'))
     
     # ========== Print time
     print_time(start_time, 'All process')
@@ -1115,6 +1201,198 @@ def compare_datasets():
                                        split_proportion=5200,
                                        split_num=2, bal_lim=0.4)
 
+# ============================== Define partitions Dataset PAN2022 ============
+"""
+Agrega los problemas creados a un nuevo dataset junto con los creados 
+anteriormente
+"""
+def joinNewDatasets(ds_list,stats_dict_clean,news_t,news_f):
+    
+    df_texts = stats_dict_clean['df_texts']
+    
+    pm_list = ds_list['problem_list']
+    tru_list = ds_list['truth_list']
+    tru_count = ds_list['truth_count']
+    txt_list = ds_list['text_id_list']
+    neg = len(tru_list) - tru_count
+    print("Antes de agregar nuevos = ",len(tru_list))
+    
+    for new in tqdm(news_t):
+        topic_1 = df_texts['topic'][df_texts['text_id']==new[0]].to_numpy()[0]
+        topic_2 = df_texts['topic'][df_texts['text_id']==new[1]].to_numpy()[0]
+        author_1 = df_texts['author'][df_texts['text_id']==new[0]].to_numpy()[0]
+        author_2 = df_texts['author'][df_texts['text_id']==new[1]].to_numpy()[0]
+        
+        new_item = {}
+        new_item['prob_id'] = str(uuid.uuid4())
+        new_item['labels'] = [0,1]
+        new_item['topics'] = [topic_1,topic_2] 
+        new_item['authors'] = [author_1,author_2]
+        new_item['text_ids'] = [new[0],new[1]]
+        
+        pm_list.append(new_item)
+        tru_list.append(1)
+        tru_count = tru_count + 1
+        txt_list.append(new[0])
+        txt_list.append(new[1])
+        
+        
+    for new in tqdm(news_f[0:(tru_count-neg)]):
+        topic_1 = df_texts['topic'][df_texts['text_id']==new[0]].to_numpy()[0]
+        topic_2 = df_texts['topic'][df_texts['text_id']==new[1]].to_numpy()[0]
+        author_1 = df_texts['author'][df_texts['text_id']==new[0]].to_numpy()[0]
+        author_2 = df_texts['author'][df_texts['text_id']==new[1]].to_numpy()[0]
+        
+        new_item = {}
+        new_item['prob_id'] = str(uuid.uuid4())
+        new_item['labels'] = [0,1]
+        new_item['topics'] = [topic_1,topic_2] 
+        new_item['authors'] = [author_1,author_2]
+        new_item['text_ids'] = [new[0],new[1]]
+        
+        pm_list.append(new_item)
+        tru_list.append(0)
+        txt_list.append(new[0])
+        txt_list.append(new[1])
+        
+    new_dict = {}
+    new_dict['problem_list'] = pm_list
+    new_dict['truth_list'] = tru_list
+    new_dict['truth_count'] = tru_count
+    new_dict['text_id_list'] = list(set(txt_list))
+    
+    return new_dict
+
+"""
+Esta funcion es especial para el datasetpan 2022 ya que como se eliminaron 
+muchos problemas para lograr particiones con autores ajenos, se tendrá
+que crear nuevos problemas
+"""
+def generate_new_probelms(ds_list,stats_dict_clean):
+    
+    df_stats = stats_dict_clean['df_stats']
+    df_texts = stats_dict_clean['df_texts']
+    
+    df_list_T = pd.DataFrame(ds_list['problem_list'])
+    textIds_list = df_list_T['text_ids'].to_numpy()
+    
+    authors_list = [auth for prob in ds_list['problem_list'] for auth in prob['authors']]
+    #Autores unicos en particion
+    authors = set(authors_list)
+    id_texts_by_author = id_text_by_author(df_stats)
+    
+    news_t = generate_new_true_problems(authors,id_texts_by_author,df_texts,textIds_list)
+    news_f = generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list)
+    
+    return news_t,news_f
+    
+    
+def id_text_by_author(df_stats):
+    id_texts_by_author = {}
+    author_counts = df_stats['author'].value_counts()
+    for author in author_counts.index:
+        mask = df_stats['author'].isin([author])
+        text_ids = df_stats[mask]['text_id'].unique()
+        id_texts_by_author[author] = text_ids
+    return id_texts_by_author
+
+def generate_new_true_problems(authors,id_texts_by_author,df_texts,textIds_list):
+    news_t = []
+    print('Generando nuevos probelmas positivos...')
+    for author in tqdm(authors):
+        text_ids = id_texts_by_author[author] 
+        for p in combinantorial(text_ids):
+    
+            if(p[0]==p[1]):
+                continue
+                
+            #ver si sigue el patron
+            topic_txt1 = df_texts['topic'][df_texts['text_id']==p[0]].to_numpy()
+            topic_txt2 = df_texts['topic'][df_texts['text_id']==p[1]].to_numpy()
+            
+            if(topic_txt1.size == 0 or topic_txt2.size == 0):
+                continue
+            
+            if(topic_txt1[0]=='text_message'):
+                continue
+            
+            add_n = True
+            #Se checa si ya existe la pareja
+            for ids_txt in textIds_list:
+                if(p==ids_txt or [p[1],p[0]]==ids_txt):
+                    add_n = False
+                    break
+                
+            if(add_n):
+                news_t.append(p)
+    
+    return news_t
+
+
+def generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list):
+    news_f = []
+    print('Generando nuevos probelmas falsos...')
+    for index,author_s in enumerate(tqdm(authors)):
+        
+        for jndex,author in enumerate(authors):
+            
+            if(index<=jndex):
+                continue
+            
+            if(author_s == author):
+                continue
+                
+            a_v = id_texts_by_author[author_s]
+            b_v = id_texts_by_author[author]
+            mesh = np.array(np.meshgrid(a_v, b_v))
+            combinations = mesh.T.reshape(-1, 2)
+                    
+            for i in range(combinations.shape[0]):
+                p = [combinations[i,:][0],combinations[i,:][1]]
+    
+                if(p[0]==p[1]):
+                    continue
+    
+                #checa si son del mismo autor
+                auth_txt1 = df_texts['author'][df_texts['text_id']==p[0]].to_numpy()
+                auth_txt2 = df_texts['author'][df_texts['text_id']==p[1]].to_numpy()
+    
+                if(auth_txt1.size == 0 or auth_txt2.size == 0):
+                    continue
+    
+                if(auth_txt1[0] == auth_txt2[0]):
+                    continue
+    
+                #checa si sigue el patron de topicos
+                topic_txt1 = df_texts['topic'][df_texts['text_id']==p[0]].to_numpy()
+                topic_txt2 = df_texts['topic'][df_texts['text_id']==p[1]].to_numpy()
+    
+                if(topic_txt1.size == 0 or topic_txt2.size == 0):
+                    continue
+    
+                if(topic_txt1[0]=='text_message'):
+                    continue   
+    
+                add_n = True
+                #Se checa si ya existe la pareja
+                for ids_txt in textIds_list:
+                    if(p==ids_txt or [p[1],p[0]]==ids_txt):
+                        add_n = False
+                        break
+                        
+                if(add_n):
+                    news_f.append(p)
+    return news_f
+
+
+def combinantorial(lst):
+    count = 0
+    index = 1
+    pairs = []
+    for element1 in lst:
+        for element2 in lst[index:]:
+            yield [element1, element2]
+        index += 1
 # ============================== Join dataset from ds_file and doc_dict =======
 
 def fit_dict(doc_dict, list_of_ds):
