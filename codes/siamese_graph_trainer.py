@@ -24,7 +24,7 @@ import warnings
 import torch
 from torch.utils.tensorboard import SummaryWriter
 # import torch_geometric.nn as gnn
-from torch_geometric.data import DataLoader
+from torch_geometric.loader import DataLoader
 from typing import Tuple
 
 from common_func_tesis import (time_string, save_obj, load_obj, print_time,
@@ -291,11 +291,11 @@ def define_ds_dl_join(doc_dict_folder, data_type_list, ds_list_folder, lim,
 
     # ========== Load ds_lists
     ds_list_train = load_obj(os.path.join(ds_list_folder,
-                                          'ds_list_train'), fast=True)
+                                          'ds_list_train_n'), fast=True)
     ds_list_val = load_obj(os.path.join(ds_list_folder,
-                                        'ds_list_val'), fast=True)
+                                        'ds_list_val_n'), fast=True)
     ds_list_test = load_obj(os.path.join(ds_list_folder,
-                                         'ds_list_test'), fast=True)
+                                         'ds_list_test_n'), fast=True)
     # ========== Load doc_dicts
     start_time_l = time.time()
     doc_dicts_dict = \
