@@ -254,10 +254,9 @@ def define_doc_dict(doc_dict_folder, data_type):
         doc_dict = load_dictionary_parts(graph_pos)
         if doc_dict is None:
             graphs = os.path.join(doc_dict_folder,
-                                  'sparse_raw_dict_' + data_type)
+                                  'sparse_dict_' + data_type)
             pos = os.path.join(doc_dict_folder,
                                'pos_encoded_dict_' + data_type)
-            
             graph_dict = load_dictionary_parts(graphs)
             pos_dict = load_dictionary_parts(pos)
             doc_dict = {key: (graph_dict[key], pos_dict[key])
