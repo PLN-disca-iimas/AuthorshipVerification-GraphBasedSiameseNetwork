@@ -190,6 +190,66 @@ def apply_to_lst_arch(origin_label, dest_label, dest_folder, symbol, log,
             pipeline_func(origin_dict, dest_label, sufix, dest_folder, log,
                           *pipeline_func_args)
 
+# ======================================== Files auxiliar transforms
+def pipeline_dict_separate_sparse_raw(origin_dict, dest_label, sufix,
+                                      dest_folder, log):
+    print('Processing to separate...')
+
+    sparse_dict = {k: v[0] for (k, v) in origin_dict.items()}
+    nodes_dict = {k: v[1] for (k, v) in origin_dict.items()}
+    del origin_dict
+
+    print('To sparse_dict...')
+    dest_file = 'sparse_dict_' + dest_label + sufix
+    print('Saving with joblib...')
+    print('object size: ', total_size(sparse_dict))
+    print('object size: ', total_size(sparse_dict), file=log)
+    start_time_s = time.time()
+    save_obj(sparse_dict, os.path.join(dest_folder, dest_file))
+    print_time(start_time_s, 'Save ' + dest_file, log)
+    del sparse_dict
+
+    print('To nodes_dict...')
+    dest_file = 'nodes_dict_' + dest_label + sufix
+    print('Saving with joblib...')
+    print('object size: ', total_size(nodes_dict))
+    print('object size: ', total_size(nodes_dict), file=log)
+    start_time_s = time.time()
+    save_obj(nodes_dict, os.path.join(dest_folder, dest_file))
+    print_time(start_time_s, 'Save ' + dest_file, log)
+    del nodes_dict
+    
+def separate_sparse_raw():
+    # ========== Definir dataset, numero de particiones, compresión
+    dataset_name = '22-train'
+    element_num = 1046
+
+    folder_label = str(None) + '_' + str(element_num)
+    symbol = '_%%'
+
+    dest_folder = os.path.join('../data/PAN22_graphs/',
+                               dataset_name + '_' + folder_label)
+    if not os.path.exists(dest_folder):
+        print('... creando folder ', dest_folder)
+        os.makedirs(dest_folder)
+
+    print('==================================================')
+    print('========== Separando sparse_raw')
+
+    gv_op = ['med', 'short', 'full']
+#     gv_op = ['short']
+    for graph_version in gv_op:
+        print(f'===== Processing {graph_version} ... =====')
+        origin_label = 'sparse_raw_dict_' + graph_version
+        dest_label = graph_version
+        log = open(os.path.join(dest_folder, 'log_separate.txt'), 'w+')
+        args = ()
+        apply_to_lst_arch(origin_label, dest_label, dest_folder, symbol, log,
+                          pipeline_dict_separate_sparse_raw, args)
+        log.close()
+
+
+
 
 # ============================================================
 # ============================== leerpickle functions ==========
@@ -216,7 +276,8 @@ def read_parts(file_name, dest_folder, symbol):
 # ============================== Test functions ==========
 
 def main():
-     pipeline_dict_main()
+     #pipeline_dict_main() #1
+     separate_sparse_raw() #2
 
 
 if __name__ == "__main__":
