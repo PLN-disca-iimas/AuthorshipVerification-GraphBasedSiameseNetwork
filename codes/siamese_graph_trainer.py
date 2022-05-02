@@ -24,7 +24,7 @@ import warnings
 import torch
 from torch.utils.tensorboard import SummaryWriter
 # import torch_geometric.nn as gnn
-from torch_geometric.loader import DataLoader
+from torch_geometric.data import DataLoader
 from typing import Tuple
 
 from common_func_tesis import (time_string, save_obj, load_obj, print_time,
