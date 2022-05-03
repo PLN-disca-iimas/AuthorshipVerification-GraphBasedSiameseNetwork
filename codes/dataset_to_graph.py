@@ -15,6 +15,7 @@ except:
     sys.path.insert(1,os.path.join(os.path.abspath('.'),".."))
     from utils.common_func import save_obj, load_obj, print_time, total_size
 
+from features import FeatureExtractor
 # ============================== To transform texts dict ==========
 # ===== Text to graph and features
 
@@ -36,6 +37,11 @@ def graph_sparse_raw_to_pos_encoded(sparse_raw):
     node_pos = [node[1] for node in node_names]
     node_attr = encode_pos(node_pos)
     return node_attr
+
+def text_parsed_to_features(parsed):
+    extractor = FeatureExtractor(parsed=True)
+    vec_features = extractor.extract_features(parsed)
+    return vec_features
 
 # ========== dict to dict transformations
 
