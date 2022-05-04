@@ -1,11 +1,11 @@
-#!/home/embarcaderoruiz21/anaconda3/envs/myenv/bin/python3.8
-
 # -*- coding: utf-8 -*
 
 import argparse
 import os
 import time
 import math
+import nltk
+import scipy
 from itertools import count as Count
 import itertools
 
@@ -214,6 +214,9 @@ def predict(EVALUATION_DIRECTORY, OUTPUT_DIRECTORY, train_dataset='med'):
 
 
 def main():
+    nltk.download('averaged_perceptron_tagger')
+    nltk.download('punkt')
+    nltk.download('stopwords')
     # Parser para pasar argumentos desde línea de comandos con flags
     parser = argparse.ArgumentParser()
     parser.add_argument('-i', type=str, required=True, help='Eval dir')
