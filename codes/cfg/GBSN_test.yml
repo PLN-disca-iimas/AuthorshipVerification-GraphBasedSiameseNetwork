@@ -26,13 +26,13 @@ exp_ops:
         raw_components_list:
           - class: 'GBFeatures'
             args:
-                conv_layers_num: 6
+                conv_layers_num: 9
                 conv_type: 'gnn.LEConv'
                 h_ch: 64
                 out_ch: 64
                 pool_type: 'GlobalAttentionSelect'
                 pool_att_ch: 32
-                pool_att_layers: 4
+                pool_att_layers: 8
                 pool_ref: 'last'
         final_out_join: 'abs'
         final_out_layers_num: 2
