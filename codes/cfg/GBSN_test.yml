@@ -7,7 +7,7 @@ folder_sufix: '_None_1046'
 doc_dict_folder_prefix: '../data/PAN22_graphs/'
 ds_list_folder_prefix: '../data/PAN22_text_split/'
 dest_folder_prefix: '../test/test_output_siamese/test_command_line/'
-epochs: 100
+epochs: 130
 checkpoint_freq: 100
 lim: 20
 bm_free_epochs: 1
@@ -26,7 +26,7 @@ exp_ops:
         raw_components_list:
           - class: 'GBFeatures'
             args:
-                conv_layers_num: 6
+                conv_layers_num: 12
                 conv_type: 'gnn.GraphConv'
                 h_ch: 64
                 out_ch: 64
