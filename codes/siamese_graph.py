@@ -574,6 +574,7 @@ _class_dict = {'SiameseNetwork': SiameseNetwork,
                'GBFeatures': GBFeatures,
                'TextFeatures': TextFeatures,
                'gnn.LEConv': gnn.LEConv,
+               'gnn.GraphConv': gnn.GraphConv,
                'GlobalAttentionSelect': GlobalAttentionSelect}
 
 
