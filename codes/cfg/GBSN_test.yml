@@ -32,10 +32,10 @@ exp_ops:
                 out_ch: 64
                 pool_type: 'GlobalAttentionSelect'
                 pool_att_ch: 32
-                pool_att_layers: 2
+                pool_att_layers: 8
                 pool_ref: 'last'
         final_out_join: 'abs'
-        final_out_layers_num: 4
+        final_out_layers_num: 2
         final_out_ch: 64
 repeat_experiment: 1
 
