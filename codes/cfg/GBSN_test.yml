@@ -7,7 +7,7 @@ folder_sufix: '_None_1046'
 doc_dict_folder_prefix: '../data/PAN22_graphs/'
 ds_list_folder_prefix: '../data/PAN22_text_split/'
 dest_folder_prefix: '../test/test_output_siamese/test_command_line/'
-epochs: 100
+epochs: 130
 checkpoint_freq: 100
 lim: 20
 bm_free_epochs: 1
