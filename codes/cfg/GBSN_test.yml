@@ -12,12 +12,12 @@ checkpoint_freq: 100
 lim: 20
 bm_free_epochs: 1
 lr: 0.001
-batch_size: 512
+batch_size: 256
 num_workers: 4
 
 # ========== Datasets options
 ds_op:
-    exp_label: 'short'
+    exp_label: 'med'
 
 # ========== Model options
 exp_ops:
@@ -32,7 +32,7 @@ exp_ops:
                 out_ch: 64
                 pool_type: 'GlobalAttentionSelect'
                 pool_att_ch: 32
-                pool_att_layers: 4
+                pool_att_layers: 2
                 pool_ref: 'last'
         final_out_join: 'abs'
         final_out_layers_num: 4
