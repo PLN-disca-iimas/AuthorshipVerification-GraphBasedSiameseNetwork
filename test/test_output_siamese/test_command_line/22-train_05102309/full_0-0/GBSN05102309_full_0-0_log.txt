@@ -1,0 +1,184 @@
+ds_op:  {'exp_label': 'full'}
+experiment repetition:  0  of  1
+data_type_list:  ['full']
+
+Sparse mode: False
+device cuda:7
+tensor type torch.FloatTensor
+Epochs: 130
+Batch size: 256
+Starting with exp_op:
+('model_args', {'raw_components_list': [{'class': <class 'siamese_graph.GBFeatures'>, 'args': {'conv_layers_num': 6, 'conv_type': <class 'torch_geometric.nn.conv.graph_conv.GraphConv'>, 'h_ch': 64, 'out_ch': 64, 'pool_type': <class 'siamese_graph.GlobalAttentionSelect'>, 'pool_att_ch': 32, 'pool_att_layers': 4, 'pool_ref': 'last'}}], 'final_out_join': 'abs', 'final_out_layers_num': 4, 'final_out_ch': 64})
+
+
+loss_fn: BCEWithLogitsLoss()
+loss_fn_aux_dict:
+('soft_f1_loss', <function soft_f1_loss at 0x7f594fe5fca0>)
+('double_soft_f1_loss', <function double_soft_f1_loss at 0x7f594fe5fd30>)
+('bound_f1_loss', <function bound_f1_loss at 0x7f594fe5fe50>)
+
+
+
+===== Model:
+
+ SiameseNetwork(
+  (components): ModuleList(
+    (0): GBFeatures(
+      (conv_layers): ModuleList(
+        (0): GCLayer(
+          (conv): GraphConv(38, 64)
+          (norm): BatchNorm(64)
+        )
+        (1): GCLayer(
+          (conv): GraphConv(64, 64)
+          (norm): BatchNorm(64)
+        )
+        (2): GCLayer(
+          (conv): GraphConv(64, 64)
+          (norm): BatchNorm(64)
+        )
+        (3): GCLayer(
+          (conv): GraphConv(64, 64)
+          (norm): BatchNorm(64)
+        )
+        (4): GCLayer(
+          (conv): GraphConv(64, 64)
+          (norm): BatchNorm(64)
+        )
+        (5): GCLayer(
+          (conv): GraphConv(64, 64)
+          (norm): BatchNorm(64)
+        )
+      )
+      (pool): GlobalAttentionSelect(gate_nn=Sequential(
+        (0): Linear(in_features=64, out_features=32, bias=True)
+        (1): ReLU()
+        (2): Linear(in_features=32, out_features=32, bias=True)
+        (3): ReLU()
+        (4): Linear(in_features=32, out_features=32, bias=True)
+        (5): ReLU()
+        (6): Linear(in_features=32, out_features=1, bias=True)
+        (7): ReLU()
+      ), nn=None)
+    )
+  )
+  (final_out): Sequential(
+    (0): Linear(in_features=64, out_features=64, bias=True)
+    (1): ReLU()
+    (2): Linear(in_features=64, out_features=64, bias=True)
+    (3): ReLU()
+    (4): Linear(in_features=64, out_features=64, bias=True)
+    (5): ReLU()
+    (6): Linear(in_features=64, out_features=1, bias=True)
+  )
+)
+
+===== Optimizer:
+Adam (
+Parameter Group 0
+    amsgrad: False
+    betas: (0.9, 0.999)
+    eps: 1e-08
+    lr: 0.001
+    weight_decay: 0
+)
+
+ ===== Train model. Execute time was:
+Minutes: 2.61
+Seconds: 156.76
+
+ ===== Test last_model. Execute time was:
+Minutes: 0.01
+Seconds: 0.34
+
+ ===== Test best_model. Execute time was:
+Minutes: 0.01
+Seconds: 0.33
+
+ ===== Test best_model_sa. Execute time was:
+Minutes: 0.01
+Seconds: 0.37
+
+Saving raw metrics in: ../test/test_output_siamese/test_command_line/22-train_05102309/full_0-0/GBSN05102309_full_0-0_metrics
+
+ ===== best_model:
+Epoch: 23
+                          val      test
+-------------------  --------  --------
+main loss            0.355133  0.584111
+average              0.808282  0.810233
+roc_auc              0.263158  0.263158
+f1_score             0.974359  0.974359
+c_at_1               0.95      0.95
+f_05                 0.959596  0.959596
+brier                0.894299  0.904052
+soft_f1_loss         0.152977  0.102624
+double_soft_f1_loss  0.545145  0.551249
+bound_f1_loss        0.176912  0.126697
+
+ ===== best_model_sa:
+Epoch: 1
+                          val      test
+-------------------  --------  --------
+main loss            0.641956  0.641956
+average              0.868746  0.763483
+roc_auc              0.684211  0.157895
+f1_score             0.974359  0.974359
+c_at_1               0.95      0.95
+f_05                 0.959596  0.959596
+brier                0.775567  0.775567
+soft_f1_loss         0.320118  0.320117
+double_soft_f1_loss  0.61486   0.614861
+bound_f1_loss        0.342345  0.342345
+
+ ===== last_model:
+Epoch: 129
+                           val       test
+-------------------  ---------  ---------
+main loss            1.53623    3.00943
+average              0.808268   0.819239
+roc_auc              0.210526   0.263158
+f1_score             0.974359   0.974359
+c_at_1               0.95       0.95
+f_05                 0.959596   0.959596
+brier                0.946857   0.949084
+soft_f1_loss         0.0362906  0.029762
+double_soft_f1_loss  0.518145   0.514881
+bound_f1_loss        0.0606272  0.0541129
+
+ ===== Early stop model:
+Epoch: 23
+Early stop model deactivated
+
+===== Max average in val: 0.868746 epoch 1
+
+===== Optimize threshold for best_model:
+Test: Original
+0.8102329183927521
+Val: Best th posible
+('0.05', '0.00')
+0.8172137048756254
+Test: Optimized
+0.8168781295001898
+Test: Best th posible
+('0.05', '0.00')
+0.8168781295001898
+
+===== Optimize threshold for best_model_sa:
+Test: Original
+0.763483303080106
+Val: Best th posible
+('0.05', '0.00')
+0.8963158631686824
+Test: Optimized
+0.7910526944177073
+Test: Best th posible
+('0.05', '0.00')
+0.7910526944177073
+
+==========
+Max gpu_usage: 31968
+
+ ===== Total time for GBSN05102309_full_0-0. Execute time was:
+Minutes: 2.92
+Seconds: 175.03
