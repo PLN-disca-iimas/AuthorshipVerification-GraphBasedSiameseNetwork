@@ -148,7 +148,13 @@ def predict(EVALUATION_DIRECTORY, OUTPUT_DIRECTORY, train_dataset='med'):
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 
     # Load model
-    if train_dataset == 'med':
+    if train_dataset == 'short':
+        model_path = '../PAN22_predict/best_model_.pth'
+        th_best, margin_best = 0.65, 0.20
+        data_type_list = ['short', 'med',
+                          'short', 'med',
+                          'text_feat']
+    elif train_dataset == 'med':
         model_path = '../PAN22_predict/med_best_model_sa_.pth'
         th_best, margin_best = 0.65, 0.20
         data_type_list = ['short', 'med',

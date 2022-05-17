@@ -1251,7 +1251,6 @@ class GBSN_linear_adjust:
 
     def predict(self, dl: torch.utils.data.DataLoader):
         """Return predictions from self.model"""
-        print('----> ',next(iter(dl)))
         pred_list = []
         prob_id_list = []
         with torch.no_grad():
