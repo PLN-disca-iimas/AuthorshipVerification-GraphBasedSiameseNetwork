@@ -265,7 +265,7 @@ def define_doc_dict(doc_dict_folder, data_type):
             del pos_dict
 
         data_available = 'graph-pos'
-    else:
+    elif data_type == 'text_features':
         text_feat = os.path.join(doc_dict_folder, 'text_feat_dict_')
         doc_dict = load_dictionary_parts(text_feat)
         data_available = 'text_feat'
@@ -291,11 +291,11 @@ def define_ds_dl_join(doc_dict_folder, data_type_list, ds_list_folder, lim,
 
     # ========== Load ds_lists
     ds_list_train = load_obj(os.path.join(ds_list_folder,
-                                          'ds_list_train_n'), fast=True)
+                                          'ds_list_train'), fast=True)
     ds_list_val = load_obj(os.path.join(ds_list_folder,
-                                        'ds_list_val_n'), fast=True)
+                                        'ds_list_val'), fast=True)
     ds_list_test = load_obj(os.path.join(ds_list_folder,
-                                         'ds_list_test_n'), fast=True)
+                                         'ds_list_test'), fast=True)
     # ========== Load doc_dicts
     start_time_l = time.time()
     doc_dicts_dict = \
@@ -336,7 +336,7 @@ def define_ds_dl_join(doc_dict_folder, data_type_list, ds_list_folder, lim,
                                      data_available_list],
                                     lim=lim)
 
-    print(f"Number of training graphs: {len(ds_train)}", file=f)
+    print(f'Number of training graphs: {len(ds_train)}', file=f)
     print(f'Number of val graphs: {len(ds_val)}', file=f)
     print(f'Number of test graphs: {len(ds_test)}', file=f)
     # ========== Define dataloaders
@@ -1141,6 +1141,7 @@ def run_several_experiments(dataset_name, folder_sufix, dest_folder_prefix,
         os.makedirs(dest_folder)
 
     # ========== Unpack parameters dataset
+    # TODO: Make consistent ensemble and single notation
     exp_label = ds_op['exp_label']
     if exp_label != 'ensemble':
         data_type_list = [exp_label]
@@ -1186,12 +1187,12 @@ def run_several_experiments(dataset_name, folder_sufix, dest_folder_prefix,
                     component['class'] = _class_dict[component['class']]
 
             # If component is a model_path. (For GBSN ensemble)
+            # The component is a string with the path where the GBSN single
+            # trained model is saved
             elif isinstance(component, str):
-                model_path = component
-                model_path_list.append(model_path)
-                # Transform to a checkpoint
-                checkpoint = torch.load(model_path, map_location='cpu')
-                model_args['raw_components_list'][i] = checkpoint
+                model_args['raw_components_list'][i] = component
+                # Add to model path list
+                model_path_list.append(component)
 
             # Solo conservamos checkpoint_list exp_op['model_args']
             # model_args = {k: v for (k, v) in model_args.items()
@@ -1251,6 +1252,7 @@ class GBSN_linear_adjust:
 
     def predict(self, dl: torch.utils.data.DataLoader):
         """Return predictions from self.model"""
+
         pred_list = []
         prob_id_list = []
         with torch.no_grad():

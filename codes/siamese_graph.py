@@ -52,13 +52,23 @@ def save_checkpoint(model_dict: dict, model_label: str, folder_to_save: str,
 
 def load_checkpoint(checkpoint: Union[str, dict], model=None, opt_class=None,
                     device: str = 'cpu', pretrain: bool = True):
+    """ Create model class accordingly to the parammeters passed. Two use cases:
+        Pass a dictionary with the setting of the model:
+
+        Pass a string with the path of a pretrained model
+    """
+
+    # TODO Remove this functionality in order to be consistent in the input
+    # If pass a string, read the pretrained model in the path
     if isinstance(checkpoint, str):
         # cambiar map_location a cpu
-        checkpoint = torch.load(checkpoint, map_location=device)
+        checkpoint = torch.load(checkpoint, map_location='cpu')
 
     model_dict = {'epoch': checkpoint['epoch']}
-    # try to load automatically. TODO: Reemplazar por assert
+    # If we do not pass model class explicitly
+    # TODO: Reemplazar por assert
     if model is None:
+        # Try to get the class from the checkpoint
         if 'model_class' in checkpoint:
             model = define_model(checkpoint['model_class'],
                                  checkpoint['model_args'])
@@ -69,6 +79,7 @@ def load_checkpoint(checkpoint: Union[str, dict], model=None, opt_class=None,
                   'del modelo')
             exit()
 
+    # If pretrain is set to true, load the state dict
     if pretrain:
         model.load_state_dict(checkpoint['model_state_dict'])
 
@@ -367,14 +378,15 @@ class TextFeatures(torch.nn.Module):
                  text_feat_layers_num,
                  h_ch=64, out_ch=64):
         super().__init__()
-        self.out_ch = out_ch
         if text_feat_layers_num == 0:
             self.feat_layer = torch.nn.Identity()
+            self.out_ch = num_text_features
         else:
             self.feat_layer = \
                 define_dense_layer(num_text_features, h_ch, out_ch,
                                    text_feat_layers_num,
                                    final_relu=False)
+            self.out_ch = out_ch
 
     def forward(self, x):
         return self.feat_layer(x)
@@ -393,7 +405,11 @@ class SiameseNetwork(torch.nn.Module):
 
         Args:
             raw_components_list (list): List of the components used to extract
-                features
+                features. A component should be either:
+                    - A dictionary defining class_model and class_args.
+                    - Pretrained components. A checkpoint of a SiameseNetwork
+                      with single component. In this case, we use the same
+                      component that the one in the SiameseNetwork class.
             pretrain (bool): Only relevant in pretrained components. Define
                 if the component is used with pretrained weights.
             freeze_param (str): Only relevant in pretrained components. Define
@@ -500,7 +516,7 @@ class SiameseNetwork(torch.nn.Module):
                               pair.x_t_batch, pair.edge_attr_t)
             return (emb_s, emb_t)
 
-    def define_embedding(self, component: dict) -> tuple:
+    def define_embedding(self, component: Union[dict, str]) -> tuple:
         """define_embedding.
 
         Args:
@@ -509,41 +525,36 @@ class SiameseNetwork(torch.nn.Module):
                 - dict with a pretrained SiameseNetwork using SINGLE component
         """
 
-        # If is a dict with parameters of a component
-        if len(component.keys()) == 2:
-            if component['class'] == GBFeatures:
-                embedding_type = 'GCN'
-            elif component['class'] == TextFeatures:
-                embedding_type = 'text_feat'
-
+        # If is a dict with 'class' and 'args'. No pretrained component
+        if isinstance(component, dict):
             embedding = define_model(component['class'],
                                      component['args'])
             out_ch = embedding.out_ch
-            return embedding_type, embedding, out_ch
 
         # If is checkpoint of a pretrained SiameseNetwork
-        else:
-            # recover model
+        elif isinstance(component, str):
+            # Load the model from checkpoint
             model_dict = load_checkpoint(component, pretrain=self.pretrain)
-            model = model_dict['model']
+            # Right now we only support this functionality when the
+            # SiameseNetwork has one component
+            siamese_model_components = model_dict['model'].components_list
+            assert len(siamese_model_components) == 1
+            # Use the unique component of the SiameseNetwork
+            embedding = siamese_model_components[0]
+            out_ch = embedding.out_ch
             if (self.pretrain and self.freeze_param == 'graph_components'):
-                # congelamos los parámetros
-                for param in model.parameters():
+                # Freeze embedding parameters
+                for param in embedding.parameters():
                     param.requires_grad = False
-                # congelamos las estadísticas
-                model.eval()
+                embedding.eval()
 
-            # Change forward. With this we use just the component
-            model.forward = model.forward_one
-            # Hacemos nulas las capas que no ocupamos
-            if 'final_out' in model._modules.keys():
-                model.final_out = None
+        # Deduce component class
+        if isinstance(embedding, GBFeatures):
+            embedding_type = 'GCN'
+        elif isinstance(embedding, TextFeatures):
+            embedding_type = 'text_feat'
 
-            if 'reduction' in model._modules.keys():
-                model.reduction = None
-
-            # TODO return embedding_type from model
-            return 'GCN', model, model.out_ch
+        return embedding_type, embedding, out_ch
 
     def forward(self, item_list: list) -> torch.Tensor:
         """Forward of the class.
@@ -574,9 +585,6 @@ _class_dict = {'SiameseNetwork': SiameseNetwork,
                'GBFeatures': GBFeatures,
                'TextFeatures': TextFeatures,
                'gnn.LEConv': gnn.LEConv,
-               'gnn.GraphConv': gnn.GraphConv,
-               'gnn.GCN2Conv': gnn.GCN2Conv,
-               'gnn.TAGConv': gnn.TAGConv,
                'GlobalAttentionSelect': GlobalAttentionSelect}
 
 
