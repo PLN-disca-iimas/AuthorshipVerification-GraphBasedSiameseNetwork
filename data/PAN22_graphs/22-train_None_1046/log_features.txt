@@ -1,0 +1,17 @@
+Número de partes:  1
+['parsed_dict_%%00.pkl']
+
+========== Work in part parsed_dict_%%00.pkl
+Cores:  4
+Cores:  4
+
+ ===== Process text_feat_dict_%%00. Execute time was:
+Minutes: 0.04
+Seconds: 2.35
+object size:  175028
+
+ ===== Save text_feat_dict_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.01
+function_args:
+{}

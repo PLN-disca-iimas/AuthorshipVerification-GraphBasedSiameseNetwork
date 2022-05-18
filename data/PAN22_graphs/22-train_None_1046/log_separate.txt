@@ -7,8 +7,8 @@ object size:  116452
  ===== Save sparse_dict_full_%%00. Execute time was:
 Minutes: 0.00
 Seconds: 0.02
-object size:  26418375
+object size:  26658879
 
  ===== Save nodes_dict_full_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.07
+Seconds: 0.05

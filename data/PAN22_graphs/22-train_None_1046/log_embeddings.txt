@@ -1,0 +1,5 @@
+Número de partes:  1
+['sparse_raw_dict_med_%%00.pkl']
+
+========== Work in part sparse_raw_dict_med_%%00.pkl
+Cores:  4

@@ -254,8 +254,117 @@ def separate_sparse_raw():
                           pipeline_dict_separate_sparse_raw, args)
         log.close()
 
+    print('==================================================')
+    print('========== Procesando features')
+    log = open(os.path.join(dest_folder, 'log_features.txt'), 'w+')
+    lst_arch = read_parts('parsed_dict', dest_folder, symbol)
+    print('Número de partes: ', len(lst_arch))
+    print(lst_arch)
+    print('Número de partes: ', len(lst_arch), file=log)
+    print(lst_arch, file=log)
+    
+
+    # ===== Split dict in parts
+    cpu_c = max([int(cpu_count()*0.25), 1])
+    use_joblib = None
+
+    for arch in lst_arch:
+        print('\n========== Work in part ' + arch)
+        print('\n========== Work in part ' + arch, file=log)
+        # Quitamos la extensión
+        arch_s, _ = os.path.splitext(arch)
+        # Obtenemos sufijo
+        sufix = arch_s[arch_s.find(symbol):]
+        origin_dict = load_obj(dest_folder + '/' + arch, fast=True)
+        pipeline_dict_features(origin_dict, sufix, cpu_c,
+                                 dest_folder, log, use_joblib)
+    log.close()
+
+    # print('==================================================')
+    # print('========== Procesando embeddings')
+
+    
+    # graph_version = 'med'
+    # log = open(os.path.join(dest_folder, 'log_embeddings.txt'), 'w+')
+    # lst_arch = read_parts('sparse_raw_dict_' + graph_version, dest_folder,
+    #                       symbol)
+    # print('Número de partes: ', len(lst_arch))
+    # print(lst_arch)
+    # print('Número de partes: ', len(lst_arch), file=log)
+    # print(lst_arch, file=log)
+
+    # # ===== Split dict in parts
+    # for arch in lst_arch:
+    #     print('\n========== Work in part ' + arch)
+    #     print('\n========== Work in part ' + arch, file=log)
+    #     # Quitamos la extensión
+    #     arch, _ = os.path.splitext(arch)
+    #     # Obtenemos sufijo
+    #     sufix = arch[arch.find(symbol):]
+    #     origin_dict = load_obj(dest_folder + '/' + arch, fast=True)
+    #     pipeline_dict_embeddings(origin_dict, graph_version, sufix, cpu_c,
+    #                              dest_folder, log, use_joblib)
+
+    # log.close()
 
 
+def pipeline_dict_embeddings(sparse_raw, graph_version, sufix, cpu_c,
+                             dest_folder, log, use_joblib):
+    print('Cores: ', cpu_c, file=log)
+
+    print('Processing to word2vec dict...')
+    dest_file = 'word2vec_dict' + '_' + graph_version + sufix
+#     w2v_path = './embeddings/GoogleNews-vectors-negative300.bin'
+#     function_args = \
+#         {'model': KeyedVectors.load_word2vec_format(w2v_path, binary=True)}
+    function_args = \
+        {'model': api.load('word2vec-google-news-300')}
+    word2vec = \
+        dict_to_dict(sparse_raw, graph_sparse_raw_to_embeddings, cpu_c,
+                     dest_folder, dest_file, log, function_args, use_joblib,
+                     count_flag=True)
+    del word2vec
+
+    print('Processing to fasttext dict...')
+    dest_file = 'fasttext_dict' + '_' + graph_version + sufix
+    function_args = \
+        {'model': api.load('fasttext-wiki-news-subwords-300')}
+    fasttext = \
+        dict_to_dict(sparse_raw, graph_sparse_raw_to_embeddings, cpu_c,
+                     dest_folder, dest_file, log, function_args, use_joblib,
+                     count_flag=True)
+    del fasttext
+
+    print('Processing to glove dict...')
+    dest_file = 'glove_dict' + '_' + graph_version + sufix
+    function_args = \
+        {'model': api.load('glove-wiki-gigaword-300')}
+    glove = \
+        dict_to_dict(sparse_raw, graph_sparse_raw_to_embeddings, cpu_c,
+                     dest_folder, dest_file, log, function_args, use_joblib,
+                     count_flag=True)
+    del glove
+
+    # print('Processing to sense2vec dict...')
+    # dest_file = 'sense2vec_dict' + '_' + graph_version + sufix
+    # function_args = dict()
+    # sense2vec = \
+        # dict_to_dict(sparse_raw, graph_sparse_raw_to_sense2vec, cpu_c,
+                     # dest_folder, dest_file, log, function_args)
+    # del sense2vec
+
+
+def pipeline_dict_features(parsed_dict, sufix, cpu_c, dest_folder, log,
+                           use_joblib):
+    print('Cores: ', cpu_c, file=log)
+
+    # ===== Transform to parsed_dict
+    print('Processing to text_feat_dict...')
+    dest_file = 'text_feat_dict' + sufix
+    function_args = dict()
+    text_feat_dict = dict_to_dict(parsed_dict, text_parsed_to_features, cpu_c,
+                                  dest_folder, dest_file, log, function_args,
+                                  use_joblib)
 
 # ============================================================
 # ============================== leerpickle functions ==========
@@ -282,8 +391,9 @@ def read_parts(file_name, dest_folder, symbol):
 # ============================== Test functions ==========
 
 def main():
-     #pipeline_dict_main() #1
-     separate_sparse_raw() #2
+    #Estos metodos construye los textos a grafos 
+    #pipeline_dict_main() #Primero se ejecuta este individual
+    separate_sparse_raw() #Luego este individual
 
 
 if __name__ == "__main__":

@@ -1396,6 +1396,7 @@ def combinantorial(lst):
 # ============================== Join dataset from ds_file and doc_dict =======
 
 def fit_dict(doc_dict, list_of_ds):
+    print('x = ',len(doc_dict))
     list_of_dict = [{key: doc_dict[key] for key in ds_list['text_id_list']}
                     for ds_list in list_of_ds]
     return list_of_dict
