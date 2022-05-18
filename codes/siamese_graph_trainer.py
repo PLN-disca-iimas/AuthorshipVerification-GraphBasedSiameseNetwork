@@ -270,8 +270,6 @@ def define_doc_dict(doc_dict_folder, data_type):
         doc_dict = load_dictionary_parts(text_feat)
         data_available = 'text_feat'
 
-    print('--- ',data_type)
-    print('--- ',doc_dict)
     return doc_dict, data_available
 
 
@@ -299,8 +297,6 @@ def define_ds_dl_join(doc_dict_folder, data_type_list, ds_list_folder, lim,
     ds_list_test = load_obj(os.path.join(ds_list_folder,
                                          'ds_list_test'), fast=True)
     # ========== Load doc_dicts
-    print('--->>> ',doc_dict_folder)
-    print('---->>>',set(data_type_list))
     start_time_l = time.time()
     doc_dicts_dict = \
         {data_type: define_doc_dict(doc_dict_folder, data_type) for
