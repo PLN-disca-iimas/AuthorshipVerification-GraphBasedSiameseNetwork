@@ -31,7 +31,7 @@ def cfg_from_file(filename):
 
 
 if __name__ == "__main__":
-    cfg_file = 'cfg/GBSN_test_ensemble.yml'
+    cfg_file = 'cfg/GBSN_test.yml'
     cfg = cfg_from_file(cfg_file)
     print('Using config:')
     pprint.pprint(cfg)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     # dest_folder_base = cfg['dest_folder_prefix'] + cfg['dataset_name']
     epochs = cfg['epochs']
     checkpoint_freq = cfg['checkpoint_freq']
-    lim = cfg['lim']
+    lim = cfg['lim'] 
     bm_free_epochs = cfg['bm_free_epochs']
     lr = cfg['lr']
     batch_size = cfg['batch_size']

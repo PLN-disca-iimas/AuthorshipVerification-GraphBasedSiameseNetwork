@@ -1,18 +1,18 @@
 CONFIG_NAME: 'GBSN_test'
 
 # ========== General options
-device: 'cuda:7'
+device: 'cuda:0'
 dataset_name: '22-train'
 folder_sufix: '_None_1046'
 doc_dict_folder_prefix: '../data/PAN22_graphs/'
 ds_list_folder_prefix: '../data/PAN22_text_split/'
 dest_folder_prefix: '../test/test_output_siamese/test_command_line/'
-epochs: 130
+epochs: 100
+lim:
 checkpoint_freq: 100
-lim: 20
 bm_free_epochs: 1
 lr: 0.001
-batch_size: 512
+batch_size: 256
 num_workers: 4
 
 # ========== Datasets options
@@ -27,7 +27,7 @@ exp_ops:
           - class: 'GBFeatures'
             args:
                 conv_layers_num: 6
-                conv_type: 'gnn.LEConv'
+                conv_type: 'gnn.TAGConv'
                 h_ch: 64
                 out_ch: 64
                 pool_type: 'GlobalAttentionSelect'

@@ -12,7 +12,7 @@ ds_list_folder_prefix: '../data/PAN22_text_split/'
 dest_folder_prefix: '../test/test_output_siamese/test_cl_ensemble/'
 epochs: 2
 checkpoint_freq: 100
-lim: 20
+lim:
 bm_free_epochs: 1
 lr: 0.001
 batch_size: 256
