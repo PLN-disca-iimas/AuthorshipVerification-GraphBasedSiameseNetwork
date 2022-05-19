@@ -27,7 +27,7 @@ exp_ops:
           - class: 'GBFeatures'
             args:
                 conv_layers_num: 6
-                conv_type: 'gnn.TAGConv'
+                conv_type: 'gnn.LEConv'
                 h_ch: 64
                 out_ch: 64
                 pool_type: 'GlobalAttentionSelect'
