@@ -1,3 +1,0 @@
-ds_op:  {'exp_label': 'full'}
-experiment repetition:  0  of  1
-data_type_list:  ['full']

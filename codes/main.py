@@ -31,7 +31,7 @@ def cfg_from_file(filename):
 
 
 if __name__ == "__main__":
-    cfg_file = 'cfg/GBSN_test.yml'
+    cfg_file = 'cfg/GBSN_test_ensemble.yml'
     cfg = cfg_from_file(cfg_file)
     print('Using config:')
     pprint.pprint(cfg)
