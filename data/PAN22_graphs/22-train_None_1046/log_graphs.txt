@@ -5,32 +5,32 @@ Número de partes:  1
 Cores:  8
 
  ===== Process parsed_dict_%%00. Execute time was:
-Minutes: 0.09
-Seconds: 5.50
-object size:  62008990
+Minutes: 0.08
+Seconds: 4.74
+object size:  55509310
 
  ===== Save parsed_dict_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.18
+Seconds: 0.17
 function_args:
 {}
 Cores:  8
 
  ===== Process sparse_raw_dict_med_%%00. Execute time was:
 Minutes: 0.01
-Seconds: 0.48
-object size:  7562824
+Seconds: 0.45
+object size:  7399822
 
  ===== Save sparse_raw_dict_med_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.05
+Seconds: 0.04
 function_args:
 {'reduce_classes': ['CD', 'FW', 'JJ', 'JJR', 'JJS', 'LS', 'NN', 'NNS', 'NNP', 'NNPS', 'RB', 'RBR', 'RBS', 'SYM', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', '$OTHER'], 'graph_type': 'DiGraph'}
 Cores:  8
 
  ===== Process pos_encoded_dict_med_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.20
+Seconds: 0.19
 object size:  116452
 
  ===== Save pos_encoded_dict_med_%%00. Execute time was:
@@ -42,19 +42,19 @@ Cores:  8
 
  ===== Process sparse_raw_dict_short_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.26
-object size:  3764846
+Seconds: 0.23
+object size:  3753681
 
  ===== Save sparse_raw_dict_short_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.03
+Seconds: 0.04
 function_args:
 {'reduce_classes': ['CC', 'CD', 'DT', 'EX', 'FW', 'IN', 'JJ', 'JJR', 'JJS', 'LS', 'MD', 'NN', 'NNS', 'NNP', 'NNPS', 'PDT', 'POS', 'PRP', 'PRP$', 'RB', 'RBR', 'RBS', 'RP', 'SYM', 'TO', 'UH', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'WDT', 'WP', 'WP$', 'WRB', '$PUNCT', '$OTHER'], 'graph_type': 'DiGraph'}
 Cores:  8
 
  ===== Process pos_encoded_dict_short_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.19
+Seconds: 0.17
 object size:  116452
 
  ===== Save pos_encoded_dict_short_%%00. Execute time was:
@@ -66,8 +66,8 @@ Cores:  8
 
  ===== Process sparse_raw_dict_full_%%00. Execute time was:
 Minutes: 0.01
-Seconds: 0.42
-object size:  26149097
+Seconds: 0.40
+object size:  26318148
 
  ===== Save sparse_raw_dict_full_%%00. Execute time was:
 Minutes: 0.00
@@ -78,7 +78,7 @@ Cores:  8
 
  ===== Process pos_encoded_dict_full_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.24
+Seconds: 0.23
 object size:  116452
 
  ===== Save pos_encoded_dict_full_%%00. Execute time was:

@@ -12,6 +12,7 @@ import numpy as np
 import matplotlib.image as img
 import matplotlib.pyplot as plt
 from sklearn.preprocessing import OneHotEncoder
+from nltk.tokenize import RegexpTokenizer
 
 import torch
 from torch_geometric import utils
@@ -79,6 +80,16 @@ class TextParser:
         # sustitute non ascii characters
         return unidecode(text2)
 
+    def custom_tokenization(self,text):
+        exp1 = re.compile('><')
+        exp2 = re.compile('<')
+        exp3 = re.compile('>')
+        text = exp1.sub("> <", text)
+        text = exp2.sub(" <", text)
+        text = exp3.sub("> ", text)
+        tokenizer = RegexpTokenizer('\w+|<\w*?>|\S+')
+        return tokenizer.tokenize(text)
+
     def define_tagged(self, text):
         """tokenize and pos"""
 
@@ -88,7 +99,8 @@ class TextParser:
 
         # Process text to get tags
         # initial pos tag
-        tokens_pos = pos_tag(tokenize.word_tokenize(text))
+        #tokens_pos = pos_tag(tokenize.word_tokenize(text))
+        tokens_pos = pos_tag(self.custom_tokenization(text))
         # complement pos tag
         text_tag = []
         classes_a = Deepcopy(self.classes)

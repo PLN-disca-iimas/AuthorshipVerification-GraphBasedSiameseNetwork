@@ -14,7 +14,7 @@ Total partitions:  12
 
  ===== Process. Execute time was:
 Minutes: 0.01
-Seconds: 0.34
+Seconds: 0.32
 
  ===== Save. Execute time was:
 Minutes: 0.00
