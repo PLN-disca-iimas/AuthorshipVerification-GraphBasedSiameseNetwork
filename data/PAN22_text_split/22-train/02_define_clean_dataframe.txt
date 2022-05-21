@@ -20,8 +20,8 @@ Problems with texts with less than 1 tokens:
 []
 
  ===== Process. Execute time was:
-Minutes: 0.00
-Seconds: 0.25
+Minutes: 0.01
+Seconds: 0.33
 
  ===== Save. Execute time was:
 Minutes: 0.00

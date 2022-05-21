@@ -5,25 +5,25 @@ Número de partes:  1
 Cores:  8
 
  ===== Process parsed_dict_%%00. Execute time was:
-Minutes: 0.10
-Seconds: 6.30
-object size:  62419883
+Minutes: 0.09
+Seconds: 5.50
+object size:  62008990
 
  ===== Save parsed_dict_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.19
+Seconds: 0.18
 function_args:
 {}
 Cores:  8
 
  ===== Process sparse_raw_dict_med_%%00. Execute time was:
 Minutes: 0.01
-Seconds: 0.40
-object size:  7761063
+Seconds: 0.48
+object size:  7562824
 
  ===== Save sparse_raw_dict_med_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.04
+Seconds: 0.05
 function_args:
 {'reduce_classes': ['CD', 'FW', 'JJ', 'JJR', 'JJS', 'LS', 'NN', 'NNS', 'NNP', 'NNPS', 'RB', 'RBR', 'RBS', 'SYM', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', '$OTHER'], 'graph_type': 'DiGraph'}
 Cores:  8
@@ -42,12 +42,12 @@ Cores:  8
 
  ===== Process sparse_raw_dict_short_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.24
-object size:  3878447
+Seconds: 0.26
+object size:  3764846
 
  ===== Save sparse_raw_dict_short_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.10
+Seconds: 0.03
 function_args:
 {'reduce_classes': ['CC', 'CD', 'DT', 'EX', 'FW', 'IN', 'JJ', 'JJR', 'JJS', 'LS', 'MD', 'NN', 'NNS', 'NNP', 'NNPS', 'PDT', 'POS', 'PRP', 'PRP$', 'RB', 'RBR', 'RBS', 'RP', 'SYM', 'TO', 'UH', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'WDT', 'WP', 'WP$', 'WRB', '$PUNCT', '$OTHER'], 'graph_type': 'DiGraph'}
 Cores:  8
@@ -66,12 +66,12 @@ Cores:  8
 
  ===== Process sparse_raw_dict_full_%%00. Execute time was:
 Minutes: 0.01
-Seconds: 0.33
-object size:  26527159
+Seconds: 0.42
+object size:  26149097
 
  ===== Save sparse_raw_dict_full_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.15
+Seconds: 0.14
 function_args:
 {'reduce_classes': [], 'graph_type': 'DiGraph'}
 Cores:  8
@@ -83,6 +83,6 @@ object size:  116452
 
  ===== Save pos_encoded_dict_full_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.03
+Seconds: 0.02
 function_args:
 {}

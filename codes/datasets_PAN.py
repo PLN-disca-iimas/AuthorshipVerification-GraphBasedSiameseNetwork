@@ -1313,7 +1313,7 @@ def generate_new_true_problems(authors,id_texts_by_author,df_texts,textIds_list)
             if(topic_txt1.size == 0 or topic_txt2.size == 0):
                 continue
             
-            if(topic_txt1[0]=='text_message'):
+            if(topic_txt1[0]==topic_txt2[0]):
                 continue
             
             add_n = True
@@ -1370,7 +1370,7 @@ def generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list
                 if(topic_txt1.size == 0 or topic_txt2.size == 0):
                     continue
     
-                if(topic_txt1[0]=='text_message'):
+                if(topic_txt1[0]==topic_txt2[0]):
                     continue   
     
                 add_n = True
