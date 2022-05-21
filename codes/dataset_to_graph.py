@@ -140,7 +140,7 @@ def pipeline_dict_parsed_and_graphs(origin_dict, dest_label, sufix,
 def pipeline_dict_main():
     """Function to process texts_dict in parts to default graphs"""
     dataset_name = '22-train'
-    element_num = 2000
+    element_num = 500
 
     folder_label = str(None) + '_' + str(element_num)
     symbol = '_%%'
@@ -228,7 +228,7 @@ def pipeline_dict_separate_sparse_raw(origin_dict, dest_label, sufix,
 def separate_sparse_raw():
     # ========== Definir dataset, numero de particiones, compresión
     dataset_name = '22-train'
-    element_num = 2000
+    element_num = 500
 
     folder_label = str(None) + '_' + str(element_num)
     symbol = '_%%'

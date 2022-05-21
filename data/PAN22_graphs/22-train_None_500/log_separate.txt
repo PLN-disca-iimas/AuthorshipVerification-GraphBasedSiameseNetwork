@@ -1,0 +1,38 @@
+Número de partes:  3
+['sparse_raw_dict_full_%%00.pkl', 'sparse_raw_dict_full_%%01.pkl', 'sparse_raw_dict_full_%%02.pkl']
+
+========== Work in part sparse_raw_dict_full_%%00.pkl
+object size:  56516
+
+ ===== Save sparse_dict_full_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.01
+object size:  14285054
+
+ ===== Save nodes_dict_full_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.03
+
+========== Work in part sparse_raw_dict_full_%%01.pkl
+object size:  56520
+
+ ===== Save sparse_dict_full_%%01. Execute time was:
+Minutes: 0.00
+Seconds: 0.01
+object size:  11534804
+
+ ===== Save nodes_dict_full_%%01. Execute time was:
+Minutes: 0.00
+Seconds: 0.02
+
+========== Work in part sparse_raw_dict_full_%%02.pkl
+object size:  5768
+
+ ===== Save sparse_dict_full_%%02. Execute time was:
+Minutes: 0.00
+Seconds: 0.00
+object size:  1193463
+
+ ===== Save nodes_dict_full_%%02. Execute time was:
+Minutes: 0.00
+Seconds: 0.00

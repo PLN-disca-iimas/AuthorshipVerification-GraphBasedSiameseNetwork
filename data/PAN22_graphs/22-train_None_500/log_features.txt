@@ -1,0 +1,47 @@
+Número de partes:  3
+['parsed_dict_%%00.pkl', 'parsed_dict_%%01.pkl', 'parsed_dict_%%02.pkl']
+
+========== Work in part parsed_dict_%%00.pkl
+Cores:  4
+Cores:  4
+
+ ===== Process text_feat_dict_%%00. Execute time was:
+Minutes: 0.03
+Seconds: 2.09
+object size:  88516
+
+ ===== Save text_feat_dict_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.00
+function_args:
+{}
+
+========== Work in part parsed_dict_%%01.pkl
+Cores:  4
+Cores:  4
+
+ ===== Process text_feat_dict_%%01. Execute time was:
+Minutes: 0.01
+Seconds: 0.85
+object size:  88520
+
+ ===== Save text_feat_dict_%%01. Execute time was:
+Minutes: 0.00
+Seconds: 0.00
+function_args:
+{}
+
+========== Work in part parsed_dict_%%02.pkl
+Cores:  4
+Cores:  4
+
+ ===== Process text_feat_dict_%%02. Execute time was:
+Minutes: 0.00
+Seconds: 0.10
+object size:  8712
+
+ ===== Save text_feat_dict_%%02. Execute time was:
+Minutes: 0.00
+Seconds: 0.00
+function_args:
+{}
