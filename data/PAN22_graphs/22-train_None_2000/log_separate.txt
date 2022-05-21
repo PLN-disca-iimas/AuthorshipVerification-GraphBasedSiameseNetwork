@@ -1,0 +1,14 @@
+Número de partes:  1
+['sparse_raw_dict_full_%%00.pkl']
+
+========== Work in part sparse_raw_dict_full_%%00.pkl
+object size:  116452
+
+ ===== Save sparse_dict_full_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.02
+object size:  26453232
+
+ ===== Save nodes_dict_full_%%00. Execute time was:
+Minutes: 0.00
+Seconds: 0.06
