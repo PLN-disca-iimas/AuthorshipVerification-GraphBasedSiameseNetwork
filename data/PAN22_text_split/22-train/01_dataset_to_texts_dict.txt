@@ -1,15 +1,15 @@
 
  ===== parallel. Execute time was:
-Minutes: 0.12
-Seconds: 7.04
+Minutes: 0.10
+Seconds: 5.90
 
  ===== Process. Execute time was:
-Minutes: 0.14
-Seconds: 8.26
+Minutes: 0.12
+Seconds: 7.10
 
  ===== Save. Execute time was:
 Minutes: 0.00
-Seconds: 0.08
+Seconds: 0.09
 
 =============== Problem stats
 Total problems: 12264

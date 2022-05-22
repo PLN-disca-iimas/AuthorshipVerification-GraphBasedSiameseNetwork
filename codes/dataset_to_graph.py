@@ -393,8 +393,8 @@ def read_parts(file_name, dest_folder, symbol):
 
 def main():
     #Estos metodos construye los textos a grafos 
-    #pipeline_dict_main() #Primero se ejecuta este individual
-    separate_sparse_raw() #Luego este individual
+    #pipeline_dict_main() #Primero se ejecuta
+    separate_sparse_raw() #Luego este
 
 
 if __name__ == "__main__":

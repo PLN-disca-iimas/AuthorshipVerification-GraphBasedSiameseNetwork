@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import jsonlines
 import pandas as pd
 import numpy as np
+import random
 from unidecode import unidecode
 from nltk import tokenize
 from tqdm import tqdm, trange
@@ -1254,6 +1255,10 @@ def joinNewDatasets(ds_list,stats_dict_clean,news_t,news_f):
         tru_list.append(0)
         txt_list.append(new[0])
         txt_list.append(new[1])
+
+    c = list(zip(pm_list, tru_list))
+    random.shuffle(c)
+    pm_list, tru_list = zip(*c)
         
     new_dict = {}
     new_dict['problem_list'] = pm_list

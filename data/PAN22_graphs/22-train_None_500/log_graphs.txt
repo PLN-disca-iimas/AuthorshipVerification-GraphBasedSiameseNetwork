@@ -6,19 +6,19 @@ Cores:  8
 
  ===== Process parsed_dict_%%00. Execute time was:
 Minutes: 0.06
-Seconds: 3.81
+Seconds: 3.85
 object size:  30986694
 
  ===== Save parsed_dict_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.07
+Seconds: 0.06
 function_args:
 {}
 Cores:  8
 
  ===== Process sparse_raw_dict_med_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.24
+Seconds: 0.20
 object size:  3906069
 
  ===== Save sparse_raw_dict_med_%%00. Execute time was:
@@ -42,7 +42,7 @@ Cores:  8
 
  ===== Process sparse_raw_dict_short_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.19
+Seconds: 0.18
 object size:  1948003
 
  ===== Save sparse_raw_dict_short_%%00. Execute time was:
@@ -54,7 +54,7 @@ Cores:  8
 
  ===== Process pos_encoded_dict_short_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.11
+Seconds: 0.10
 object size:  56516
 
  ===== Save pos_encoded_dict_short_%%00. Execute time was:
@@ -78,7 +78,7 @@ Cores:  8
 
  ===== Process pos_encoded_dict_full_%%00. Execute time was:
 Minutes: 0.00
-Seconds: 0.13
+Seconds: 0.14
 object size:  56516
 
  ===== Save pos_encoded_dict_full_%%00. Execute time was:
@@ -92,7 +92,7 @@ Cores:  8
 
  ===== Process parsed_dict_%%01. Execute time was:
 Minutes: 0.02
-Seconds: 0.98
+Seconds: 1.05
 object size:  23626486
 
  ===== Save parsed_dict_%%01. Execute time was:
@@ -116,7 +116,7 @@ Cores:  8
 
  ===== Process pos_encoded_dict_med_%%01. Execute time was:
 Minutes: 0.00
-Seconds: 0.11
+Seconds: 0.10
 object size:  56520
 
  ===== Save pos_encoded_dict_med_%%01. Execute time was:
@@ -128,19 +128,19 @@ Cores:  8
 
  ===== Process sparse_raw_dict_short_%%01. Execute time was:
 Minutes: 0.00
-Seconds: 0.13
+Seconds: 0.12
 object size:  1794835
 
  ===== Save sparse_raw_dict_short_%%01. Execute time was:
 Minutes: 0.00
-Seconds: 0.01
+Seconds: 0.02
 function_args:
 {'reduce_classes': ['CC', 'CD', 'DT', 'EX', 'FW', 'IN', 'JJ', 'JJR', 'JJS', 'LS', 'MD', 'NN', 'NNS', 'NNP', 'NNPS', 'PDT', 'POS', 'PRP', 'PRP$', 'RB', 'RBR', 'RBS', 'RP', 'SYM', 'TO', 'UH', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'WDT', 'WP', 'WP$', 'WRB', '$PUNCT', '$OTHER'], 'graph_type': 'DiGraph'}
 Cores:  8
 
  ===== Process pos_encoded_dict_short_%%01. Execute time was:
 Minutes: 0.00
-Seconds: 0.11
+Seconds: 0.10
 object size:  56520
 
  ===== Save pos_encoded_dict_short_%%01. Execute time was:
@@ -183,7 +183,7 @@ object size:  2400995
 
  ===== Save parsed_dict_%%02. Execute time was:
 Minutes: 0.00
-Seconds: 0.00
+Seconds: 0.01
 function_args:
 {}
 Cores:  8
@@ -202,7 +202,7 @@ Cores:  8
 
  ===== Process pos_encoded_dict_med_%%02. Execute time was:
 Minutes: 0.00
-Seconds: 0.03
+Seconds: 0.02
 object size:  5768
 
  ===== Save pos_encoded_dict_med_%%02. Execute time was:
@@ -238,7 +238,7 @@ Cores:  8
 
  ===== Process sparse_raw_dict_full_%%02. Execute time was:
 Minutes: 0.00
-Seconds: 0.03
+Seconds: 0.02
 object size:  1198247
 
  ===== Save sparse_raw_dict_full_%%02. Execute time was:

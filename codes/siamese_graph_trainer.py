@@ -410,10 +410,10 @@ def plot_metrics(losses_train, losses_val, losses_aux_val,
     # ===== losses
     plt.plot(epochs_range, losses_train, '-b', lw=2, label='loss train')
     plt.plot(epochs_range, losses_val, '-g', lw=2, label='loss val')
-    colors_dict = {'BCE': 'darkgreen',
-                   'soft_f1_loss': 'mediumseagreen',
-                   'double_soft_f1_loss': 'limegreen',
-                   'bound_f1_loss': 'seagreen',
+    colors_dict = {'BCE': 'red',
+                   'soft_f1_loss': 'purple',
+                   'double_soft_f1_loss': 'darkorange',
+                   'bound_f1_loss': 'pink',
                    'mean_BCE_sf1': 'gold',
                    'mean_BCE_dsf1': 'goldenrod',
                    'mean_BCE_bf1': 'darkgoldenrod'}
