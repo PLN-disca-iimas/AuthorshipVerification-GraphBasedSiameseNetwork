@@ -30,7 +30,7 @@ from typing import Tuple
 from common_func_tesis import (time_string, save_obj, load_obj, print_time,
                                my_print, get_gpu_memory_device)
 from datasets_PAN import fit_dict
-from pan20_verif_evaluator import auc, c_at_1, f1, f_05_u_score, brier_score
+from pan_verif_evaluator import auc, c_at_1, f1, f_05_u_score, brier_score
 from siamese_graph import (GraphSiameseDatasetDictJoin,
                            # GBFeatures, TextFeatures,
                            # SiameseNetwork,

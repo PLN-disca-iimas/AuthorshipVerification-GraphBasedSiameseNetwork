@@ -6,8 +6,8 @@ Cores:  4
 Cores:  4
 
  ===== Process text_feat_dict_%%00. Execute time was:
-Minutes: 0.05
-Seconds: 3.30
+Minutes: 0.06
+Seconds: 3.45
 object size:  183396
 
  ===== Save text_feat_dict_%%00. Execute time was:

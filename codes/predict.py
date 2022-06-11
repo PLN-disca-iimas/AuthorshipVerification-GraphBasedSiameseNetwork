@@ -15,7 +15,7 @@ import torch
 from torch_geometric.data import DataLoader
 from tqdm import tqdm
 
-from common_func_tesis import print_time
+from common_func import print_time
 from dataset_to_graph import (text_to_text_parsed,
                               text_parsed_to_graph_sparse_raw,
                               graph_sparse_raw_to_pos_encoded,

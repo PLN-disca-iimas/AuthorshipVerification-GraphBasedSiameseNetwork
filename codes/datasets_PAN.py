@@ -18,13 +18,7 @@ from tqdm import tqdm, trange
 import uuid
 
 from multiprocessing import Pool, cpu_count
-
-try:
-    from ..utils.common_func import load_obj, save_obj, time_string, print_time
-except:
-    import sys
-    sys.path.insert(1,os.path.join(os.path.abspath('.'),".."))
-    from utils.common_func import load_obj, save_obj, time_string, print_time
+from common_func import load_obj, save_obj, time_string, print_time
 
 # ============================== Manage texts datasets==========
 
@@ -33,79 +27,6 @@ def wrapper_TextDataset(dataset_name, lim=None, where_to_use='server'):
 
     relative_path = '../PAN_datasets'
     # ========== Original datasets ==============================
-    # ===== to use the pan 2014 novels dataset, train
-    if dataset_name == '14-nov-train':
-        path = (relative_path +
-                '/pan14-author-verification/'
-                'pan14-author-verification-training-corpus/'
-                'pan14-author-verification-training-corpus-english-novels-'
-                '2014-04-22')
-        # Variable to print
-        param_read = (dataset_name + '-' + str(lim))
-        return TextDataset2014(path, lim), param_read
-
-    # ===== To use the PAN 2014 novels dataset, test
-    if dataset_name == '14-nov-test':
-        path = (relative_path +
-                '/pan14-author-verification/'
-                'pan14-author-verification-test-corpus/'
-                'pan14-author-verification-test-corpus2-english-novels-'
-                '2014-04-22')
-        # Variable to print
-        param_read = (dataset_name + '-' + str(lim))
-        return TextDataset2014(path, lim), param_read
-
-    # ===== To use the PAN 2015 dataset, train
-    if dataset_name == '15-train':
-        path = (relative_path +
-                '/pan15-author-verification/'
-                'training/'
-                'pan15-authorship-verification-training-dataset-english-'
-                '2015-04-19')
-        # Variable to print
-        param_read = (dataset_name + '-' + str(lim))
-        return TextDataset2014(path, lim), param_read
-
-    # ===== To use the PAN 2020 dataset, small bal
-    if dataset_name == '20-small-bal':
-        folder = (relative_path +
-                  '/pan20-author-verification-small/'
-                  'pan20-author-verification-balanced-500/')
-        jsonl_text = folder + 'PAN2020_balanced_500_text.jsonl'
-        jsonl_truth = folder + 'PAN2020_balanced_500_truth.jsonl'
-
-        # Variable to print
-        param_read = (dataset_name + '-' + str(lim))
-        return TextDataset2020(jsonl_text, jsonl_truth, lim), param_read
-
-    # ===== To use the PAN 2020 dataset, small
-    if dataset_name == '20-small-train':
-        folder = (relative_path +
-                  '/pan20-author-verification-small/'
-                  'pan20-author-verification-small-training/')
-        jsonl_text = \
-            folder + 'pan20-authorship-verification-training-small.jsonl'
-        jsonl_truth = \
-            (folder +
-             'pan20-authorship-verification-training-small-truth.jsonl')
-        # Variable to print
-        param_read = (dataset_name + '-' + str(lim))
-        return TextDataset2020(jsonl_text, jsonl_truth, lim), param_read
-
-    # ===== To use the PAN 2020 dataset, small
-    if dataset_name == '20-large-train':
-        folder = (relative_path +
-                  '/pan20-author-verification-large/'
-                  'pan20-author-verification-large-training/')
-        jsonl_text = \
-            folder + 'pan20-authorship-verification-training-large.jsonl'
-        jsonl_truth = \
-            (folder +
-             'pan20-authorship-verification-training-large-truth.jsonl')
-        # Variable to print
-        param_read = (dataset_name + '-' + str(lim))
-        return TextDataset2020(jsonl_text, jsonl_truth, lim), param_read
-    
     # ===== To use the PAN 2022 dataset,
     if dataset_name == '22-train':
         folder = (relative_path +
@@ -180,125 +101,6 @@ class TextDataset2022:
 
     def __len__(self):
         return self.len
-    
-class TextDataset2020:
-    """Clase para leer el dataset del PAN 2020"""
-
-    def __init__(self, jsonl_text, jsonl_truth, lim=None):
-        self.jsonl_text = jsonl_text
-        self.jsonl_truth = jsonl_truth
-        self.lim = lim
-        self.problem_list, self.truth_list = self.define_lists()
-        self.len = len(self.problem_list)
-
-    def define_lists(self):
-        reader_text = jsonlines.open(self.jsonl_text)
-        reader_truth = jsonlines.open(self.jsonl_truth)
-        if self.lim is None:
-            r = Count(start=0)
-        else:
-            r = range(self.lim)
-
-        problem_list = []
-        truth_list = []
-        for count in r:
-            try:
-                obj_text = reader_text.read()
-                obj_truth = reader_truth.read()
-            except EOFError:
-                print('EOF en línea: ', count)
-                break
-            except InvalidLineError:
-                print('línea inválida en: ', count)
-                continue
-
-            # truth list en valores 0 y 1
-            truth_dict = {True: 1, False: 0}
-
-            # Verificar que listas tengan misma longitud
-            texts_num = len(obj_text['pair'])
-            if (texts_num == len(obj_text['fandoms']) and
-                    texts_num == len(obj_truth['authors'])):
-                problem = {'prob_id': obj_text['id'],
-                           'texts': obj_text['pair'],
-                           'labels': [0, 1],
-                           'topics': obj_text['fandoms'],
-                           'authors': obj_truth['authors']}
-                problem_list.append(problem)
-                truth_list.append(truth_dict[obj_truth['same']])
-            else:
-                print(f'Registro de línea {count} tiene listas de distinta'
-                      'longitud')
-
-        reader_text.close()
-        reader_truth.close()
-        return problem_list, truth_list
-
-    def __getitem__(self, i):
-        return self.problem_list[i], self.truth_list[i]
-
-    def __len__(self):
-        return self.len
-
-
-class TextDataset2014:
-    """Clase para leer el dataset del PAN 2014 y 2015"""
-
-    def __init__(self, path, lim=None):
-        self.path = path
-        self.lim = lim
-        self.problem_list = self.define_problem_list()
-        self.truth_list = self.define_truth_list()
-        assert len(self.problem_list) == len(self.truth_list)
-        self.len = len(self.truth_list)
-
-    def traverse_folders(self):
-        folders = [entry for entry in os.scandir(self.path)
-                   if entry.is_dir()]
-        folders.sort(key=lambda x: x.name)
-        # Use only some folders
-        if self.lim is not None:
-            folders = folders[: self.lim]
-
-        return folders
-
-    def define_problem_list(self):
-        problem_list = []
-        for folder in self.traverse_folders():
-            with os.scandir(folder) as entries:
-                texts = []
-                text_labels = []
-                for document in entries:
-                    with open(document.path, 'r') as f:
-                        texts.append(f.read())
-                        text_labels.append(document.name)
-
-                prob_id = [folder.name]
-                problem = {'texts': texts,
-                           'text_labels': text_labels,
-                           'prob_id': prob_id}
-                problem_list.append(problem)
-
-        return problem_list
-
-    def define_truth_list(self):
-        with open(self.path + '/truth.txt', 'r') as f:
-            truth_raw = f.readlines()
-            dic_label = {'Y': True, 'N': False}
-            if self.lim is not None:
-                truth = [dic_label[line[-2:-1]] for line in
-                         truth_raw[:self.lim]]
-            else:
-                truth = [dic_label[line[-2:-1]] for line in truth_raw]
-
-        return truth
-
-    def __getitem__(self, i):
-        return self.problem_list[i], self.truth_list[i]
-
-    def __len__(self):
-        return self.len
-
 
 # ==================== To explore text datasets==========
 
@@ -1287,7 +1089,14 @@ def generate_new_probelms(ds_list,stats_dict_clean):
     id_texts_by_author = id_text_by_author(df_stats)
     
     news_t = generate_new_true_problems(authors,id_texts_by_author,df_texts,textIds_list)
-    news_f = generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list)
+
+    tru_list = ds_list['truth_list']
+    tru_count = ds_list['truth_count']
+    neg_count = len(tru_list) - tru_count
+    new_total_true = tru_count + len(news_t)
+    to_generate = new_total_true - neg_count
+
+    news_f = generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list,to_generate)
     
     return news_t,news_f
     
@@ -1311,7 +1120,6 @@ def generate_new_true_problems(authors,id_texts_by_author,df_texts,textIds_list)
             if(p[0]==p[1]):
                 continue
                 
-            #ver si sigue el patron
             topic_txt1 = df_texts['topic'][df_texts['text_id']==p[0]].to_numpy()
             topic_txt2 = df_texts['topic'][df_texts['text_id']==p[1]].to_numpy()
             
@@ -1322,7 +1130,7 @@ def generate_new_true_problems(authors,id_texts_by_author,df_texts,textIds_list)
                 continue
             
             add_n = True
-            #Se checa si ya existe la pareja
+            
             for ids_txt in textIds_list:
                 if(p==ids_txt or [p[1],p[0]]==ids_txt):
                     add_n = False
@@ -1334,8 +1142,9 @@ def generate_new_true_problems(authors,id_texts_by_author,df_texts,textIds_list)
     return news_t
 
 
-def generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list):
+def generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list,to_generate):
     news_f = []
+    should_break = False
     print('Generando nuevos probelmas falsos...')
     for index,author_s in enumerate(tqdm(authors)):
         
@@ -1357,8 +1166,7 @@ def generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list
     
                 if(p[0]==p[1]):
                     continue
-    
-                #checa si son del mismo autor
+                    
                 auth_txt1 = df_texts['author'][df_texts['text_id']==p[0]].to_numpy()
                 auth_txt2 = df_texts['author'][df_texts['text_id']==p[1]].to_numpy()
     
@@ -1368,7 +1176,6 @@ def generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list
                 if(auth_txt1[0] == auth_txt2[0]):
                     continue
     
-                #checa si sigue el patron de topicos
                 topic_txt1 = df_texts['topic'][df_texts['text_id']==p[0]].to_numpy()
                 topic_txt2 = df_texts['topic'][df_texts['text_id']==p[1]].to_numpy()
     
@@ -1387,6 +1194,17 @@ def generate_new_false_problems(authors,id_texts_by_author,df_texts,textIds_list
                         
                 if(add_n):
                     news_f.append(p)
+
+                if(len(news_f)>=to_generate):
+                    should_break = True
+                    break
+
+            if(should_break):
+                break
+
+        if(should_break):
+            break
+
     return news_f
 
 
@@ -1406,211 +1224,8 @@ def fit_dict(doc_dict, list_of_ds):
     return list_of_dict
 
 
-# ============================== get pairs.json from test_dataset =======
-
-def get_pairs():
-#     dataset_name = '20-small-bal'
-#     dataset_name = '20-small-train'
-    dataset_name = '20-large-train'
-
-    text_dict_path = \
-        os.path.join('../data/PAN20_text_split', dataset_name,
-                     'to_texts_dict/texts_dict.pkl')
-    ds_path = \
-        os.path.join('../data/PAN20_text_split', dataset_name,
-                     'ds_list_test.pkl')
-    dest_folder = \
-        os.path.join('../data/PAN20_text_split', dataset_name,
-                     'test')
-
-    text_dict = load_obj(text_dict_path, fast=True)
-    ds = load_obj(ds_path, fast=True)
-
-    if not os.path.exists(dest_folder):
-        os.makedirs(dest_folder)
-
-    truth_dict = {0: False,
-                  1: True}
-    path_pairs = os.path.join(dest_folder, 'pairs.jsonl')
-    path_truth = os.path.join(dest_folder, 'truth.jsonl')
-    with jsonlines.open(path_pairs, mode='w') as pair_writer:
-        with jsonlines.open(path_truth, mode='w') as truth_writer:
-            for problem, truth in zip(ds['problem_list'], ds['truth_list']):
-                pairs = {"id": problem['prob_id'],
-                         "fandoms": problem['topics'],
-                         "pair": [text_dict[problem['text_ids'][0]],
-                                  text_dict[problem['text_ids'][1]]]}
-                truth_format = {"id": problem['prob_id'],
-                                "same": truth_dict[truth],
-                                "authors": problem['authors']}
-#                 truth = truth
-                pair_writer.write(pairs)
-                truth_writer.write(truth_format)
-
-
-
-# ============================== write small balanced PAN 20 dataset ==========
-
-def write_small_balanced_set(jsonl_text, jsonl_truth, file_name, size, lim):
-    print('========= write_small_balanced_set')
-    print('size: ', size)
-    reader_text = jsonlines.open(jsonl_text)
-    reader_truth = jsonlines.open(jsonl_truth)
-    true_instances = []
-    false_instances = []
-    true_count = 0
-    false_count = 0
-    for i in range(lim):
-        if (true_count < size or false_count < size):
-            print('for loop')
-            try:
-                obj_text = reader_text.read()
-                obj_truth = reader_truth.read()
-            except EOFError:
-                print('EOF en línea: ', i)
-                break
-            except InvalidLineError:
-                print('línea inválida en: ', i)
-                continue
-
-            print(obj_truth['same'])
-            if (true_count < size) and (obj_truth['same'] is True):
-                true_instances.append((obj_text, obj_truth))
-                true_count += 1
-
-            if (false_count < size) and (obj_truth['same'] is False):
-                false_instances.append((obj_text, obj_truth))
-                false_count += 1
-
-            print('true_count: ', true_count)
-            print('false_count: ', false_count)
-
-    print('after for loop')
-    print('true_count: ', true_count)
-    print('false_count: ', false_count)
-    reader_text.close()
-    reader_truth.close()
-
-    writer_text = jsonlines.open(file_name + '_text.jsonl', mode='w')
-    writer_truth = jsonlines.open(file_name + '_truth.jsonl', mode='w')
-    for count in range(size):
-        try:
-            writer_text.write(true_instances[count][0])
-            writer_truth.write(true_instances[count][1])
-        except IndexError:
-            print('Solo se encontraron ', count, ' instancias true')
-
-        try:
-            writer_text.write(false_instances[count][0])
-            writer_truth.write(false_instances[count][1])
-        except IndexError:
-            print('Solo se encontraron ', count, ' instancias false')
-
-    writer_text.close()
-    writer_truth.close()
-
-
-# ============================================================
-# ============================== Test functions ==========
-
-def test_wrapper_TextDataset():
-    dataset_name = '22-train'
-    where_to_use = 'acerL20'
-    lim = None
-    dataset, param_read = wrapper_TextDataset(dataset_name, lim, where_to_use)
-    dataset_to_texts_dict(dataset,sys.stdout,"../PAN_datasets")
-    print(f'Dataset: {dataset}:')
-    print('====================')
-    print(f'Number of elements: {len(dataset)}')
-    print('Problem_list_names:')
-    names = [problem['prob_id'][0] for problem in dataset.problem_list]
-    print(names)
-    print('Truth_list:')
-    print(dataset.truth_list)
-
-    problem, y = dataset[0]
-    print(f'Problem: {problem}')
-    print(f'Label: {y}')
-
-    print(f'param_read: {param_read}')
-
-
-def test_fit_dict():
-    path = ('../data/PAN20_graphs/20-small-bal_2_no-punct/'
-            'edge_dict_no-punct_short')
-    doc_dict = load_obj(path, fast=True)
-    path = ('../data/PAN20_text_split/20-small-bal_2/ds_list_train')
-    ds_train = load_obj(path, fast=True)
-    path = ('../data/PAN20_text_split/20-small-bal_2/ds_list_val')
-    ds_val = load_obj(path, fast=True)
-    list_of_ds = [ds_train, ds_val]
-    list_of_dict = fit_dict(doc_dict, list_of_ds)
-    print(len(list_of_dict))
-
-
-def verify_splits_custom():
-    time_stamp = time_string(short=True)
-
-    dest_folder_1 = os.path.join('../data/PAN20_text_split',
-                                 '20-small-train')
-#     ds_list_1_path = os.path.join(dest_folder_1, 'ds_list_test')
-    ds_list_1_path = os.path.join(dest_folder_1, 'clean/ds_list_clean')
-    ds_list_1 = load_obj(ds_list_1_path, fast=True)
-    stats_dict_clean_path = \
-        os.path.join(dest_folder_1, 'clean/stats_dict_clean')
-    stats_dict_clean_1 = load_obj(stats_dict_clean_path, fast=True)
-    df_stats_1 = stats_dict_clean_1['df_stats']
-
-    dest_folder_2 = os.path.join('../data/PAN20_text_split',
-                                 '20-large-train')
-#     ds_list_2_path = os.path.join(dest_folder_2, 'ds_list_train')
-    ds_list_2_path = os.path.join(dest_folder_2, 'clean/ds_list_clean')
-    ds_list_2 = load_obj(ds_list_2_path, fast=True)
-    stats_dict_clean_path = \
-        os.path.join(dest_folder_2, 'clean/stats_dict_clean')
-    stats_dict_clean_2 = load_obj(stats_dict_clean_path, fast=True)
-    df_stats_2 = stats_dict_clean_2['df_stats']
-
-#     ds_list_test_path = os.path.join(dest_folder, 'ds_list_test')
-#     ds_list_test = load_obj(ds_list_test_path, fast=True)
-
-    print('Custom verify_splits...')
-    log_name = os.path.join(dest_folder_1,
-                            'Custom_verify_splits' + time_stamp + '.txt')
-    print('log save in: ' + log_name)
-    f = open(log_name, 'w+')
-    print('ds_list_1_path:', ds_list_1_path, file=f)
-    print('ds_list_2_path:', ds_list_2_path, file=f)
-#     print('ds_list_test_path:', ds_list_test_path, file=f)
-
-    print('Train:', file=f)
-    print(len(ds_list_1['problem_list']),
-          '. Truth ', ds_list_1['truth_count'], file=f)
-    print('Val:', file=f)
-    print(len(ds_list_2['problem_list']),
-          '. Truth ', ds_list_2['truth_count'], file=f)
-
-    authors_1, topics_1 = \
-        unique_authors_topics(ds_list_1, df_stats_1)
-    authors_2, topics_2 = \
-        unique_authors_topics(ds_list_2, df_stats_2)
-
-    print('1 and 2', file=f)
-    report_intersections(ds_list_1, ds_list_2,
-                         authors_1, authors_2,
-                         topics_1, topics_2, f)
-
-
-# ============================================================
-
 def main():
     dataset_pipeline()
-#     verify_splits_custom()
-    #compare_datasets()
-#     test_fit_dict()
-#     test_wrapper_TextDataset()
-#    get_pairs()
-
 
 if __name__ == "__main__":
     main()

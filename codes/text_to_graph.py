@@ -17,12 +17,7 @@ from nltk.tokenize import RegexpTokenizer
 import torch
 from torch_geometric import utils
 
-try:
-    from ..utils.common_func import total_size, time_string
-except:
-    import sys
-    sys.path.insert(1,os.path.join(os.path.abspath('.'),".."))
-    from utils.common_func import total_size, time_string
+from common_func import total_size, time_string
     
 
 _treebank = ['CC', 'CD', 'DT', 'EX', 'FW', 'IN', 'JJ', 'JJR', 'JJS', 'LS',

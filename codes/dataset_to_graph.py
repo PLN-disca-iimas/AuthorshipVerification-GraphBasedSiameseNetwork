@@ -8,12 +8,7 @@ from multiprocessing import cpu_count
 from joblib import Parallel, delayed
 
 from text_to_graph import (TextParser, ToCoocurrence, _rc_dict, encode_pos)
-try:
-    from ..utils.common_func import save_obj, load_obj, print_time, total_size
-except:
-    import sys
-    sys.path.insert(1,os.path.join(os.path.abspath('.'),".."))
-    from utils.common_func import save_obj, load_obj, print_time, total_size
+from common_func import save_obj, load_obj, print_time, total_size
 
 from features import FeatureExtractor
 # ============================== To transform texts dict ==========
@@ -140,7 +135,7 @@ def pipeline_dict_parsed_and_graphs(origin_dict, dest_label, sufix,
 def pipeline_dict_main():
     """Function to process texts_dict in parts to default graphs"""
     dataset_name = '22-train'
-    element_num = 500
+    element_num = 1046
 
     folder_label = str(None) + '_' + str(element_num)
     symbol = '_%%'
@@ -228,7 +223,7 @@ def pipeline_dict_separate_sparse_raw(origin_dict, dest_label, sufix,
 def separate_sparse_raw():
     # ========== Definir dataset, numero de particiones, compresión
     dataset_name = '22-train'
-    element_num = 500
+    element_num = 1046
 
     folder_label = str(None) + '_' + str(element_num)
     symbol = '_%%'
@@ -393,8 +388,8 @@ def read_parts(file_name, dest_folder, symbol):
 
 def main():
     #Estos metodos construye los textos a grafos 
-    #pipeline_dict_main() #Primero se ejecuta
-    separate_sparse_raw() #Luego este
+    pipeline_dict_main() 
+    separate_sparse_raw() 
 
 
 if __name__ == "__main__":

@@ -14,7 +14,7 @@ set()
 authors: 0
 set()
 topics: 4
-{'memo', 'essay', 'text_message', 'email'}
+{'text_message', 'memo', 'essay', 'email'}
 
 train and test
 Texts:  0
@@ -22,7 +22,7 @@ set()
 authors: 0
 set()
 topics: 4
-{'memo', 'essay', 'text_message', 'email'}
+{'text_message', 'memo', 'essay', 'email'}
 
 test and val
 Texts:  0
@@ -30,4 +30,4 @@ set()
 authors: 0
 set()
 topics: 4
-{'memo', 'essay', 'text_message', 'email'}
+{'text_message', 'memo', 'essay', 'email'}
