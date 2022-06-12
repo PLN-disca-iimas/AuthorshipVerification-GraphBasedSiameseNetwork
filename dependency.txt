@@ -1,0 +1,159 @@
+En los siguientes aparatdos se indica el paso a paso de como instalar las 
+dependencias necesarias para ejecutar el proyecto.
+
+-------------------------------------------------------------------------------------------
+Dependencias generales (no es necesario especificar versión) 
+-------------------------------------------------------------------------------------------
+Las siguientes dependencias se pueden instalar copiando y pegando en la consola.
+
+conda install PyYAML
+conda install numpy
+conda install pandas
+conda install seaborn
+conda install tqdm
+conda install tabulate
+conda install tensorboard
+conda install jsonlines
+conda install unidecode
+conda install nltk
+
+-------------------------------------------------------------------------------------------
+Como instalar Scipy
+-------------------------------------------------------------------------------------------
+En este caso si se debe especificar la verisón.
+Se debe de instalar scipy 1.8.0
+
+Comando: 
+
+pip install scipy==1.8.0
+
+Para verificar que la version es correcta se puede con el siguiente comando
+
+python -c "import scipy; print(scipy.__version__)"
+
+
+-------------------------------------------------------------------------------------------
+Como instalar Pytorch CUDA
+-------------------------------------------------------------------------------------------
+Se debe de instalar la versión 1.7.1 de Pytorch, la verisón de CUDA dependerá de la GPU, para 
+conocer la versión CUDA de tu GPU Nvidia es con el siguiente comando:
+
+nvidia-smi
+
+Puedes verificar algún otro método con las opciones descritas en el siguiente link:
+
+https://www.cyberciti.biz/faq/how-to-find-the-nvidia-cuda-version/#:~:text=The%20procedure%20is%20as%20follows%20to%20check%20the%20CUDA%20version%20on%20Linux.
+
+Para esta guía se instalará la versión 11, pero es el mismo procedimiento para la 10.2
+
+En el siguiente link (https://pytorch.org/get-started/previous-versions/) se pueden obtener los comandos para instalar versiones pasadas de Pytorch, en este caso el utilizado fue.
+
+conda install pytorch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 cudatoolkit=11.0 -c pytorch
+
+Con este comando se puede verificar si la version de Pytorch es correcta.
+
+python -c "import torch; print(torch.__version__)"
+
+Con este comando se puede verficar la version de CUDA instalada
+
+python -c "import torch; print(torch.version.cuda)"
+
+
+Si esto marca error, se debe descargar el archivo binario e instalar manualmente.
+Link de descarga:
+
+https://download.pytorch.org/whl/torch_stable.html
+
+-------------------------------------------------------------------------------------------
+Como instalar Pytorch Geometrics
+-------------------------------------------------------------------------------------------
+Posterior a instalar Pytorch se debe instalar la version de Pytorch Geometrics 1.7.0 junto con las dependencias requeridas por Pytorch Geometrics, estas deben ser compatible con la version instalada de Pytorch, de lo contrario regresara error al tartar de ejecutar el proyecto.
+
+Se pueden utilizar estos comandos para instalar los paquetes requeridos para pyg (Pytorch Geometrics), colocando en los espacios la version de pytorch instalada y la version de cuda instalada:
+
+pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-${TORCH}+${CUDA}.html
+pip install torch-geometric
+
+Ejemplo para este caso:
+
+pip install torch-scatter -f https://pytorch-geometric.com/whl/torch-1.7.1+cu11.html
+pip install torch-sparse -f https://pytorch-geometric.com/whl/torch-1.7.1+cu11.html
+pip install torch-cluster -f https://pytorch-geometric.com/whl/torch-1.7.1+cu11.html
+pip install torch-spline-conv -f https://pytorch-geometric.com/whl/torch-1.7.1+cu11.html
+pip install torch-geometric==1.7.0
+
+
+Si esto marca error, se deben de decargar los archivos binarios de cada uno en la siguiente liga
+
+https://data.pyg.org/whl/
+
+Fuente: https://pytorch-geometric.readthedocs.io/en/latest/notes/installation.html#:~:text=Binaries%20of%20older,version%20number%20here
+
+En ese link se debe de buscar la version de Pytorch instalada (ojo NO la de Pytorch geometrics, debe ser la de Pytorch) junto con la versinon de CUDA.
+
+Por ejemplo en este caso es: torch-1.7.1+cu110, entonces se descargaron los siguientes archivos:
+
+torch_spline_conv-1.2.1-cp38-cp38-linux_x86_64.whl
+torch_sparse-0.6.9-cp38-cp38-linux_x86_64.whl
+torch_scatter-2.0.6-cp38-cp38-linux_x86_64.whl
+torch_cluster-1.5.9-cp38-cp38-linux_x86_64.whl
+
+Note: deben de ser las verisones que se indican, de lo contrario regresará error al tratar de ejecutar el proyecto.
+
+Posterior a esto se deben de instalar en el server con el comando para cada archivo:
+
+pip install torch_spline_conv-1.2.1-cp38-cp38-linux_x86_64.whl
+
+
+Despues de esto se debe de instalar Pytorch geometrics con el siguinte comando:
+
+pip install torch-geometric==1.7.0
+
+Para verificar la version de pytroch geometrics : 
+
+python -c "import torch_geometric; print(torch_geometric.__version__)"
+
+
+-------------------------------------------------------------------------------------------
+Comandos de ayuda
+-------------------------------------------------------------------------------------------
+Comandos extras que probablemente puedan ser de ayuda:
+
+Como desinstalar pytorch de conda:
+
+conda uninstall pytorch
+
+Comando para desinstalar pytroch con pip:
+
+pip uninstall torch
+
+Comando para desintalar uno de los archivos binarios instalados 
+
+pip uninstall torch_spline_conv
+pip uninstall torch_sparse
+pip uninstall torch_scatter
+pip uninstall torch_cluster
+
+Clean cache
+
+conda clean --all
+pip cache purge
+sudo apt clean
+sudo apt-get autoremove --purge
+
+Para no gradar chache
+pip --no-cache-dir install
+
+Enlista paquetes instalados 
+conda list
+pip list 
+
+Lista rutas de cache
+conda info
+
+Para saber la version necesaria de cuda
+nvidia-smi
+
