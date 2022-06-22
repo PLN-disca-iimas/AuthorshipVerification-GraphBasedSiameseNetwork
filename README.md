@@ -180,6 +180,8 @@ Se generará un directorio nuevo en `data/PAN22_graphs` en donde se encontrará 
 archivos pkl con las representaciones de los textos.
 
 
+# Cita
 
+Embarcadero-Ruiz, D., Gómez-Adorno, H., Embarcadero-Ruiz, A., & Sierra, G. (2022). Graph-based Siamese network for authorship verification. Mathematics, 10(2), 277.
 
 
